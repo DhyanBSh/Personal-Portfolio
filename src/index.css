@@ -1,32 +1,256 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
 @import "tailwindcss";
 
-@theme {
+:root {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+
+  /* Light theme defaults */
+  --bg: #fcfcfc;
+  --text: #111111;
+  --muted-rgb: 17,17,17;
+  --muted-40: rgba(17,17,17,0.4);
+  --scroll-track: #fcfcfc;
+  --scroll-thumb: #d4d4d4;
+  --selection-bg: #111111;
+  --selection-text: #ffffff;
+}
+
+/* Dark theme override when `.dark` is present on <html> or <body> */
+.dark {
+  --bg: #0b0b0d;
+  --text: #e6e6e6;
+  --muted-rgb: 230,230,230;
+  --muted-40: rgba(230,230,230,0.4);
+  --scroll-track: #0b0b0d;
+  --scroll-thumb: #444444;
+  --selection-bg: #e6e6e6;
+  --selection-text: #0b0b0d;
 }
 
 @layer base {
   body {
-    @apply bg-[#fcfcfc] text-[#111] antialiased selection:bg-black selection:text-white overflow-x-hidden;
+    font-family: var(--font-sans);
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Selection colors use theme variables */
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-text);
   }
 }
 
-/* Custom scrollbar for an editorial feel */
+/* Custom scrollbar for an editorial feel (theme-aware) */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #fcfcfc; 
+  background: var(--scroll-track);
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d4; 
+  background: var(--scroll-thumb);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #111; 
+  background: var(--text);
 }
 
-/* Grid pattern background utility removed for editorial style */
+/* Map frequently used Tailwind arbitrary color classes to theme variables so
+   existing markup doesn't need to be changed everywhere. */
+.bg-\[\#fcfcfc\] { background-color: var(--bg) !important; }
+.text-\[\#111\] { color: var(--text) !important; }
+.bg-\[\#111\] { background-color: var(--text) !important; }
+.bg-\[\#111\]\/95 { background-color: rgba(var(--muted-rgb),0.95) !important; }
+.hover\:bg-\[\#111\]:hover { background-color: var(--text) !important; }
+.hover\:text-white:hover { color: var(--bg) !important; }
+.border-\[\#111\] { border-color: var(--text) !important; }
+.border-black\/10 { border-color: rgba(var(--muted-rgb),0.1) !important; }
+.divide-black\/10 > * + * { border-color: rgba(var(--muted-rgb),0.1) !important; }
+.text-black\/40 { color: rgba(var(--muted-rgb),0.4) !important; }
+.text-black\/30 { color: rgba(var(--muted-rgb),0.3) !important; }
+.text-black\/60 { color: rgba(var(--muted-rgb),0.6) !important; }
+.group-hover\:text-\[\#111\]:hover { color: var(--text) !important; }
+
+/* Keep the grid pattern utility empty for editorial style */
 .bg-grid-pattern {
   background: transparent;
 }
+
+/* Fullscreen site loader styles */
+.site-loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  z-index: 9999;
+}
+.loader-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loader-logo {
+  width: 84px;
+  height: auto;
+  animation: loader-rotate 1600ms linear infinite;
+}
+
+@keyframes loader-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Small fade-out helper when removing loader via JS (optional) */
+.site-loader.fade-out {
+  transition: opacity 300ms ease, visibility 300ms ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Cinematic scroll layer + reveal helpers */
+.cinematic-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Default reveal state for sections and children */
+[data-cinematic-section] .cinematic-reveal,
+section .cinematic-reveal {
+  transform: translateY(28px) scale(0.995);
+  opacity: 0;
+  filter: blur(6px) saturate(0.98);
+  transition: all 900ms cubic-bezier(.22,1,.36,1);
+}
+
+/* When section is in view apply cinematic entrance */
+.cinematic-inview .cinematic-reveal {
+  transform: translateY(0) scale(1) translateZ(0);
+  opacity: 1;
+  filter: blur(0) saturate(1);
+}
+
+/* gentle parallax smoothing for elements that are moved by JS */
+[data-parallax] {
+  will-change: transform;
+  transition: transform 0.12s linear;
+}
+
+/* Subtle tilt / skew while scrolling via css when in-view */
+.cinematic-inview {
+  --cinematic-tilt: 0.0025turn;
+  transform-origin: center top;
+}
+
+/* Custom circular cursor (non-touch devices only) */
+@media (hover: hover) and (pointer: fine) {
+
+  body {
+    cursor: none;
+  }
+
+  .cursor-dot,
+  .cursor-outline {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+
+    z-index: 9999;
+    will-change: transform, opacity;
+
+    mix-blend-mode: difference;
+
+    transform: translate3d(-9999px, -9999px, 0);
+
+    transition:
+      transform 120ms linear,
+      opacity 200ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+
+    background: #fff;
+
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor-outline {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+
+    border: 1px solid #fff;
+    background: transparent;
+
+    opacity: 0.95;
+
+    transform: translate(-50%, -50%);
+
+    transition:
+      transform 200ms cubic-bezier(.22,1,.36,1),
+      width 220ms ease,
+      height 220ms ease,
+      opacity 200ms ease,
+      border-color 160ms ease;
+  }
+
+  .cursor-hover.cursor-dot {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  .cursor-hover.cursor-outline {
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+
+  .cursor-pressed.cursor-dot {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.9;
+  }
+
+  .cursor-pressed.cursor-outline {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.85;
+  }
+}
+
+/* smooth logo rotation and swap transition */
+.navbar-logo {
+  transition: transform 220ms cubic-bezier(.22,1,.36,1), opacity 180ms ease, filter 200ms ease;
+  will-change: transform;
+}
+
+/* logo wrapper to reserve space and allow overlap without shifting nav items */
+.logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* matches h-10 */
+  height: 40px;
+  flex: 0 0 40px;
+}
+.logo-wrap img {
+  transition: opacity 240ms ease, transform 700ms cubic-bezier(.22,1,.36,1);
+}
+.logo-wrap img.opacity-0 { opacity: 0 !important; }
+.logo-wrap img.opacity-100 { opacity: 1 !important; }
+
+/* Make the main Logo.png slightly larger when visible without affecting layout */
+.logo-large {
+  transform: scale(1.28) !important;
+}
+
+
+

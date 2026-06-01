@@ -1,0 +1,82 @@
+[
+  {
+    "img": "https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=1964&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-[3/4]",
+    "partner": "Champion",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing",
+    "url": "https://www.behance.net/placeholder-champion"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1621570074981-ee6a0145c8b5?q=80&w=2070&auto=format&fit=crop",
+    "span": "md:col-span-8",
+    "aspect": "aspect-[21/9]",
+    "partner": "Benetton",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Tech Architecture",
+    "description": "Redesigned Benetton's storefront with a mobile-first UX, integrated headless commerce APIs, and improved SEO and performance across global markets.",
+    "url": "https://www.dribbble.com/placeholder-benetton"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=1974&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-square",
+    "partner": "Sotf",
+    "services": "Design UX / UI",
+    "description": "User-centered UI overhaul focusing on accessibility and simplified flows, resulting in higher engagement and faster onboarding.",
+    "url": "https://drive.google.com/file/d/placeholder-sotf"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1480455624313-e23b44b2a390?q=80&w=2070&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-[4/5]",
+    "partner": "Mason's",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Tech Architecture",
+    "description": "Built a custom commerce platform with inventory sync, tailored product configurators and an extensible tech architecture for rapid feature rollout.",
+    "url": "https://www.behance.net/placeholder-masons"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=2076&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-[3/4]",
+    "partner": "Roberto Collina",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Performance Marketing, SEO, Data Analysis, Tech Architecture",
+    "description": "End-to-end eCommerce delivery including analytics-driven marketing funnels, A/B testing, and performance tuning for international launches.",
+    "url": "https://www.dribbble.com/placeholder-roberto"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-[9/16]",
+    "partner": "Aura",
+    "services": "Design UX / UI, Custom App, Data Analysis",
+    "description": "Designed and shipped a lightweight custom app that visualizes user data and recommendations with a focus on clarity and low-latency interactions.",
+    "url": "https://drive.google.com/file/d/placeholder-aura"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1584328591636-b87332152914?q=80&w=2070&auto=format&fit=crop",
+    "span": "md:col-span-8",
+    "aspect": "aspect-[16/9]",
+    "partner": "8pm",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing, SEO, Data Analysis, Tech Architecture",
+    "description": "Launched a high-throughput storefront with advanced personalization, reducing page load times and increasing conversion across desktop and mobile.",
+    "url": "https://www.behance.net/placeholder-8pm"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1585122684803-a15d2a71f016?q=80&w=2069&auto=format&fit=crop",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Kunci",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing, SEO, Data Analysis, Tech Architecture",
+    "description": "Modernized platform with modular integrations, improved search relevance and a responsive design system for consistent branding.",
+    "url": "https://drive.google.com/file/d/placeholder-kunci"
+  },
+  {
+    "img": "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1974&auto=format&fit=crop",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Pollini",
+    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Data Analysis, Tech Architecture",
+    "description": "Delivered a polished online catalog with tailored SEO, analytics instrumentation and a scalable backend to handle peak traffic.",
+    "url": "https://www.behance.net/placeholder-pollini"
+  }
+]
