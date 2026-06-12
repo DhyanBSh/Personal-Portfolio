@@ -4,6 +4,7 @@
     "span": "md:col-span-4",
     "aspect": "aspect-[3/4]",
     "partner": "Champion",
+    "category": "UI / UX Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing",
     "url": "https://www.behance.net/placeholder-champion"
   },
@@ -12,6 +13,7 @@
     "span": "md:col-span-8",
     "aspect": "aspect-[21/9]",
     "partner": "Benetton",
+    "category": "UI / UX Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Tech Architecture",
     "description": "Redesigned Benetton's storefront with a mobile-first UX, integrated headless commerce APIs, and improved SEO and performance across global markets.",
     "url": "https://www.dribbble.com/placeholder-benetton"
@@ -21,6 +23,7 @@
     "span": "md:col-span-4",
     "aspect": "aspect-square",
     "partner": "Sotf",
+    "category": "Logo Designing",
     "services": "Design UX / UI",
     "description": "User-centered UI overhaul focusing on accessibility and simplified flows, resulting in higher engagement and faster onboarding.",
     "url": "https://drive.google.com/file/d/placeholder-sotf"
@@ -30,6 +33,7 @@
     "span": "md:col-span-4",
     "aspect": "aspect-[4/5]",
     "partner": "Mason's",
+    "category": "UI / UX Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Tech Architecture",
     "description": "Built a custom commerce platform with inventory sync, tailored product configurators and an extensible tech architecture for rapid feature rollout.",
     "url": "https://www.behance.net/placeholder-masons"
@@ -39,6 +43,7 @@
     "span": "md:col-span-4",
     "aspect": "aspect-[3/4]",
     "partner": "Roberto Collina",
+    "category": "Banner / Flyer Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Performance Marketing, SEO, Data Analysis, Tech Architecture",
     "description": "End-to-end eCommerce delivery including analytics-driven marketing funnels, A/B testing, and performance tuning for international launches.",
     "url": "https://www.dribbble.com/placeholder-roberto"
@@ -48,6 +53,7 @@
     "span": "md:col-span-4",
     "aspect": "aspect-[9/16]",
     "partner": "Aura",
+    "category": "Product Designing",
     "services": "Design UX / UI, Custom App, Data Analysis",
     "description": "Designed and shipped a lightweight custom app that visualizes user data and recommendations with a focus on clarity and low-latency interactions.",
     "url": "https://drive.google.com/file/d/placeholder-aura"
@@ -57,6 +63,7 @@
     "span": "md:col-span-8",
     "aspect": "aspect-[16/9]",
     "partner": "8pm",
+    "category": "UI / UX Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing, SEO, Data Analysis, Tech Architecture",
     "description": "Launched a high-throughput storefront with advanced personalization, reducing page load times and increasing conversion across desktop and mobile.",
     "url": "https://www.behance.net/placeholder-8pm"
@@ -66,6 +73,7 @@
     "span": "md:col-span-6",
     "aspect": "aspect-[4/3]",
     "partner": "Kunci",
+    "category": "Video Editing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing, SEO, Data Analysis, Tech Architecture",
     "description": "Modernized platform with modular integrations, improved search relevance and a responsive design system for consistent branding.",
     "url": "https://drive.google.com/file/d/placeholder-kunci"
@@ -75,6 +83,7 @@
     "span": "md:col-span-6",
     "aspect": "aspect-[4/3]",
     "partner": "Pollini",
+    "category": "Logo Designing",
     "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Data Analysis, Tech Architecture",
     "description": "Delivered a polished online catalog with tailored SEO, analytics instrumentation and a scalable backend to handle peak traffic.",
     "url": "https://www.behance.net/placeholder-pollini"

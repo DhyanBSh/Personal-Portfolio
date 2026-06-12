@@ -1,9 +1,10 @@
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ParallaxLayer } from '../components/ParallaxLayer';
-import { TextReveal } from '../components/TextReveal';
 import { useBackgroundTransition } from '../hooks/useBackgroundTransition';
+import { RecentProjects } from '../components/RecentProjects';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -14,6 +15,15 @@ const itemVariants = {
   hidden: { opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 },
   visible: { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
 };
+
+// Data used by RecentProjectsOrbit
+const projects = [
+  { category: 'Web App', title: 'Project One', image: '/projects/project1.png' },
+  { category: 'UI/UX', title: 'Project Two', image: '/projects/project2.png' },
+  { category: 'Branding', title: 'Project Three', image: '/projects/project3.png' },
+  { category: 'Mobile App', title: 'Project Four', image: '/projects/project4.png' },
+  { category: '3D Design', title: 'Project Five', image: '/projects/project5.png' },
+];
 
 const Hero = () => {
   const { backgroundColor } = useBackgroundTransition();
@@ -95,6 +105,14 @@ const CaseStudiesTable = () => {
   const { backgroundColor } = useBackgroundTransition();
   const isDark = backgroundColor === 'black';
 
+  const services = [
+    { partner: 'UI / UX Designing', platform: 'Modern, user-focused designs for web & mobile experiences.', services: '-->', label: '01' },
+    { partner: 'Logo Designing', platform: 'Crafted to build a recognizable brand identity that leaves a lasting impression.', services: '-->', label: '02' },
+    { partner: 'Banner / Flyer Designing', platform: 'Eye-catching visuals crafted for maximum impact.', services: '-->', label: '03' },
+    { partner: 'Video Editing', platform: 'Creative, polished videos with smooth storytelling.', services: '-->', label: '04' },
+    { partner: 'Product Designing', platform: 'Innovative 3D product concepts brought to life.', services: '-->', label: '05' },
+  ];
+
   return (
     <section className={`px-6 md:px-12 py-16 md:py-24 transition-colors duration-500 ${
       isDark 
@@ -109,7 +127,7 @@ const CaseStudiesTable = () => {
         }`}
       >
         <motion.span variants={itemVariants}>I build the seamless, user-friendly digital products that turn complex vision into a simple reality. </motion.span>
-        <motion.span variants={itemVariants}>Final-year Software Engineering undergraduate passionate about UI/UX and user-centered development. Skilled in React, JavaScript, Spring Boot, and full-stack development, </motion.span>
+        <motion.span variants={itemVariants}>I am a Software Engineering graduate passionate about UI/UX and user-centered design. Skilled in React, JavaScript, Spring Boot, and full-stack development, </motion.span>
         <motion.span variants={itemVariants}>I create intuitive, scalable, and accessible digital experiences. Driven to bridge design and technology to deliver impactful solutions. </motion.span>
       </motion.h2>
       <h3 className={`text-[16px] uppercase font-bold tracking-widest mb-8 transition-colors duration-500 ${
@@ -126,13 +144,7 @@ const CaseStudiesTable = () => {
       <ul className={`text-[10px] sm:text-[11px] uppercase font-bold tracking-widest flex flex-col gap-y-4 md:gap-y-0 transition-colors duration-500 ${
         isDark ? 'text-white' : 'text-[#111]'
       }`}>
-        {[
-          { partner: 'UI / UX Designing', platform: 'Modern, user-focused designs for web & mobile experiences.', services: '-->' },
-          { partner: 'Logo Designing', platform: 'Crafted to build a recognizable brand identity that leaves a lasting impression.', services: '-->' },
-          { partner: 'Banner / Flyer Designing', platform: 'Eye-catching visuals crafted for maximum impact.', services: '-->' },
-          { partner: 'Video Editing', platform: 'Creative, polished videos with smooth storytelling.', services: '-->' },
-          { partner: 'Product Designing', platform: 'Innovative 3D product concepts brought to life.', services: '-->' },
-        ].map((item, i) => (
+        {services.map((item, i) => (
           <motion.li 
             initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: i * 0.05 }}
             key={i} 
@@ -167,7 +179,6 @@ const CaseStudiesTable = () => {
     </section>
   );
 };
-
 
 const FadingText = () => {
   const { backgroundColor } = useBackgroundTransition();
@@ -210,7 +221,7 @@ const Showreel = () => {
             <div className="absolute inset-0">
             <div data-parallax data-parallax-depth="0.03" className="absolute inset-0">
               <motion.img
-                animate={{ scale: [1, 1.03, 1], filter: ['grayscale(100%)', 'grayscale(400%)', 'grayscale(100%)'] }}
+                animate={{ scale: [1, 1.03, 1], filter: ['grayscale(100%)', 'grayscale(0%)', 'grayscale(100%)'] }}
                 transition={{ duration: 36, repeat: Infinity, ease: 'easeInOut', repeatType: 'mirror' }}
                 src="/Home BG.png"
                 className={`w-full h-full object-cover object-center group-hover:grayscale-0 transition-all duration-1000 will-change-transform ${

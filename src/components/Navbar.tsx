@@ -53,7 +53,7 @@ export const Navbar = () => {
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 border-b border-black/20 bg-black/70 backdrop-blur-md transition-all"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6">
           <Link to="/" className="hover:opacity-80 transition-opacity">
             <div className="logo-wrap h-10 w-10 relative flex items-center justify-center">
               <img
@@ -76,12 +76,14 @@ export const Navbar = () => {
               <img src="/Logo Icon.png" alt="Logo Icon" className={`absolute inset-0 w-full h-full object-contain navbar-logo ${showIcon ? 'opacity-100' : 'opacity-0'}`} style={{ transform: `rotate(${rotation}deg)` }} />
             </div>
           </Link>
-        </div>
 
-        <div className="hidden md:flex gap-12 text-[11px] uppercase tracking-[0.2em] font-bold text-[#111]">
-          <Link to="/about" className="hover:opacity-50 transition-opacity">DNA</Link>
-          <Link to="/services" className="hover:opacity-50 transition-opacity">Services</Link>
-          <Link to="/portfolio" className="hover:opacity-50 transition-opacity">Portfolio</Link>
+          <div className="hidden md:block w-px h-6 bg-white/20"></div>
+
+          <div className="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] font-bold text-[#111] ml-8">
+            <Link to="/about" className="hover:opacity-50 transition-opacity">DNA</Link>
+            <Link to="/services" className="hover:opacity-50 transition-opacity">Services</Link>
+            <Link to="/portfolio" className="hover:opacity-50 transition-opacity">Portfolio</Link>
+          </div>
         </div>
 
         <div className="flex justify-end">
