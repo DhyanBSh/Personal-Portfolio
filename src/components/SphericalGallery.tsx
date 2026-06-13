@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import gsap from 'gsap';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -30,6 +29,8 @@ const getPlaceholderImage = (index: number) => {
   return LOCAL_PLACEHOLDERS[index % LOCAL_PLACEHOLDERS.length];
 };
 
+const MOBILE_BREAKPOINT = 768;
+
 const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -37,16 +38,29 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sphereGroupRef = useRef<THREE.Group | null>(null);
   const texturesRef = useRef<Map<string, THREE.Texture>>(new Map());
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
   const rotationRef = useRef({ x: 0, y: 0 });
   const targetRotationRef = useRef({ x: 0, y: 0 });
   const mouseRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
 
- 
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+  );
+
+  // Track viewport size to switch between sphere (web) and simple gallery (mobile)
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   // Load textures with fallback
   useEffect(() => {
+    if (isMobile) return;
+
     const textureLoader = new THREE.TextureLoader();
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -137,11 +151,11 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
     };
 
     loadAllTextures();
-  }, [items]);
+  }, [items, isMobile]);
 
   // Initialize Three.js scene
   useEffect(() => {
-    if (!containerRef.current || items.length === 0) return;
+    if (isMobile || !containerRef.current || items.length === 0) return;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -190,7 +204,7 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       const y = 0;
 
       // Create card
-      const geometry = new THREE.PlaneGeometry(4.5, 5.5);
+      const geometry = new THREE.PlaneGeometry(5.2, 6.4);
       
       // Get texture or create fallback
       let material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial;
@@ -262,7 +276,10 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       const intersects = raycaster.intersectObjects(sphereGroup.children);
 
       if (intersects.length > 0) {
-        const clickedCard = intersects[0].object as THREE.Mesh;
+        const clickedCard = intersects[0].object as THREE.Mesh<
+  THREE.BufferGeometry,
+  THREE.Material | THREE.Material[]
+>;
         if (clickedCard.userData?.item) {
           setSelectedItem(clickedCard.userData.item);
         }
@@ -272,22 +289,26 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
     renderer.domElement.addEventListener('click', onCardClick);
 
     // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
+    let animationFrameId: number;
 
-      // Smooth rotation with easing
-      rotationRef.current.x += (targetRotationRef.current.x - rotationRef.current.x) * 0.1;
-      rotationRef.current.y += (targetRotationRef.current.y - rotationRef.current.y) * 0.1;
+const animate = () => {
+  animationFrameId = requestAnimationFrame(animate);
 
-      if (sphereGroupRef.current) {
-        sphereGroupRef.current.rotation.x = rotationRef.current.x;
-        sphereGroupRef.current.rotation.y = rotationRef.current.y;
-      }
+  rotationRef.current.x +=
+    (targetRotationRef.current.x - rotationRef.current.x) * 0.1;
 
-      renderer.render(scene, camera);
-    };
+  rotationRef.current.y +=
+    (targetRotationRef.current.y - rotationRef.current.y) * 0.1;
 
-    animate();
+  if (sphereGroupRef.current) {
+    sphereGroupRef.current.rotation.x = rotationRef.current.x;
+    sphereGroupRef.current.rotation.y = rotationRef.current.y;
+  }
+
+  renderer.render(scene, camera);
+};
+
+animate();
 
     // Handle window resize
     const onWindowResize = () => {
@@ -305,20 +326,73 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', onWindowResize);
-      renderer.domElement.removeEventListener('mousedown', onMouseDown);
-      renderer.domElement.removeEventListener('mousemove', onMouseMove);
-      renderer.domElement.removeEventListener('mouseup', onMouseUp);
-      renderer.domElement.removeEventListener('mouseleave', onMouseUp);
-      renderer.domElement.removeEventListener('click', onCardClick);
-      containerRef.current?.removeChild(renderer.domElement);
-      renderer.dispose();
-    };
-  }, [items]);
+  window.removeEventListener('resize', onWindowResize);
+
+  renderer.domElement.removeEventListener('mousedown', onMouseDown);
+  renderer.domElement.removeEventListener('mousemove', onMouseMove);
+  renderer.domElement.removeEventListener('mouseup', onMouseUp);
+  renderer.domElement.removeEventListener('mouseleave', onMouseUp);
+  renderer.domElement.removeEventListener('click', onCardClick);
+
+  cancelAnimationFrame(animationFrameId);
+
+  sphereGroup.traverse((obj) => {
+    if (obj instanceof THREE.Mesh) {
+      obj.geometry.dispose();
+
+      if (Array.isArray(obj.material)) {
+        obj.material.forEach((m) => m.dispose());
+      } else {
+        obj.material.dispose();
+      }
+    }
+  });
+
+  texturesRef.current.forEach((texture) => {
+    texture.dispose();
+  });
+
+  texturesRef.current.clear();
+
+  containerRef.current?.removeChild(renderer.domElement);
+
+  renderer.dispose();
+};
+  }, [items, isMobile]);
 
   return (
     <div className="relative w-full h-screen bg-[#0a0a0a]">
-      <div ref={containerRef} className="w-full h-full" />
+      {isMobile ? (
+        /* Simple mobile gallery */
+        <div className="w-full h-full overflow-y-auto px-4 py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {items.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedItem(item)}
+                className="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-900 text-left"
+              >
+                <img
+                  src={item.img}
+                  alt={item.partner}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    img.src = getPlaceholderImage(index);
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <p className="text-xs uppercase tracking-widest text-white/60">{item.category}</p>
+                  <h3 className="text-lg font-semibold">{item.partner}</h3>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div ref={containerRef} className="w-full h-full" />
+      )}
 
       {/* Detail Modal */}
       <AnimatePresence>
@@ -388,19 +462,19 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
 
                   {/* CTA Link */}
                   {selectedItem.url && (
-                    <div className="pt-4">
-                      <a
-                        href={selectedItem.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 text-white text-sm uppercase tracking-widest font-bold hover:opacity-70 transition-opacity magnetic-target"
-                        style={{ transitionDuration: '0.2s' }}
-                      >
-                        View Project
-                        <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
-                      </a>
-                    </div>
-                  )}
+  <div className="pt-4">
+    <a
+      href={selectedItem.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-3 text-white text-sm uppercase tracking-widest font-bold hover:opacity-70 transition-opacity magnetic-target"
+      style={{ transitionDuration: '0.2s' }}
+    >
+      View Project
+      <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+    </a>
+  </div>
+)}
                 </div>
 
                 {/* Right Column - Image */}
@@ -411,7 +485,11 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     onError={(e) => {
                       const img = e.target as HTMLImageElement;
-                      img.src = getPlaceholderImage(items.indexOf(selectedItem));
+                      const idx = items.findIndex(
+  (item) => item.partner === selectedItem.partner
+);
+
+img.src = getPlaceholderImage(idx >= 0 ? idx : 0);
                     }}
                   />
                   {/* Spatial dimension overlay effect */}
@@ -424,9 +502,11 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       </AnimatePresence>
 
       {/* Instructions overlay */}
-      <div className="absolute top-24 left-1/2 -translate-x-1/2 z-10 text-white/60 text-sm text-center">
-        <p>Drag to rotate • Click to view details</p>
-      </div>
+      {!isMobile && (
+        <div className="absolute top-36 sm:top-24 left-1/2 -translate-x-1/2 z-10 text-white/60 text-sm text-center">
+          <p>Drag to rotate • Click to view details</p>
+        </div>
+      )}
     </div>
   );
 };

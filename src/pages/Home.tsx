@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ParallaxLayer } from '../components/ParallaxLayer';
@@ -16,23 +16,48 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
 };
 
-// Data used by RecentProjectsOrbit
-const projects = [
-  { category: 'Web App', title: 'Project One', image: '/projects/project1.png' },
-  { category: 'UI/UX', title: 'Project Two', image: '/projects/project2.png' },
-  { category: 'Branding', title: 'Project Three', image: '/projects/project3.png' },
-  { category: 'Mobile App', title: 'Project Four', image: '/projects/project4.png' },
-  { category: '3D Design', title: 'Project Five', image: '/projects/project5.png' },
-];
+
 
 const Hero = () => {
   const { backgroundColor } = useBackgroundTransition();
   const isDark = backgroundColor === 'black';
 
+  // Mouse motion system
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20 });
+  const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const { innerWidth, innerHeight } = window;
+
+    mouseX.set(e.clientX / innerWidth - 0.5);
+    mouseY.set(e.clientY / innerHeight - 0.5);
+  };
+
   return (
-    <section className={`relative isolate h-screen w-full overflow-hidden pt-20 transition-colors duration-500 ${
-      isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
-    }`}>
+    <section
+      onMouseMove={handleMouseMove}
+      className={`relative isolate h-screen w-full overflow-hidden pt-20 transition-colors duration-500 ${
+        isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
+      }`}
+    >
+      {/* Mouse reactive glow layer */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          background: isDark
+            ? 'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,0.12), transparent 40%)'
+            : 'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(0,0,0,0.08), transparent 40%)',
+        }}
+        animate={
+          {
+            '--x': smoothX,
+            '--y': smoothY,
+          } as any
+        }
+      />
 
       {/* Background */}
       <div className="absolute inset-0 w-full h-full">
@@ -42,6 +67,10 @@ const Hero = () => {
           transition={{ duration: 2, ease: "easeOut" }}
           src="/HeroBG1.png"
           alt="Hero Background"
+          style={{
+            x: useTransform(smoothX, [-0.5, 0.5], [-25, 25]),
+            y: useTransform(smoothY, [-0.5, 0.5], [-15, 15]),
+          }}
           className={`
             w-full h-full
             object-cover
@@ -58,43 +87,32 @@ const Hero = () => {
         <motion.div
           style={{ y: 0 }}
           className={`
-  relative z-10
-  h-full w-full
-  flex flex-col
-  justify-center
-
-  px-6 md:px-12
-`}
+            relative z-10
+            h-full w-full
+            flex flex-col
+            justify-center
+            px-6 md:px-12
+          `}
         >
-
-          {/* HERO TEXT (PARALLAX + INVERT) */}
+          {/* HERO TEXT */}
           <motion.h1
             initial={{ opacity: 0, y: 80, filter: "blur(20px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-
             className={`
               text-[14vw] md:text-[4vw]
               leading-[0.9]
               tracking-tighter
               uppercase
               font-bold
-
               ${isDark ? 'text-white' : 'text-white mix-blend-difference'}
-
               relative
               translate-y-110 md:translate-y-70
             `}
           >
-            <div className="opacity-70">
-              Inspired by Nature.
-            </div>
-
-            <div>
-              Designed with Purpose.
-            </div>
+            <div className="opacity-70">Inspired by Nature.</div>
+            <div>Designed with Purpose.</div>
           </motion.h1>
-
         </motion.div>
       </ParallaxLayer>
     </section>
@@ -185,7 +203,7 @@ const FadingText = () => {
   const isDark = backgroundColor === 'black';
 
   return (
-    <section className={`px-6 md:px-12 py-24 md:py-5 transition-colors duration-500 ${
+    <section className={`px-6 md:px-12 py-2 md:py-5 transition-colors duration-500 ${
       isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
     }`}>
       <motion.h2 
@@ -259,6 +277,7 @@ export const Home = () => {
     }`}>
       <Hero />
       <CaseStudiesTable />
+      <RecentProjects />
       <FadingText />
       <Showreel />
     </main>
