@@ -55,7 +55,7 @@ export const Navbar = () => {
       >
         <div className="flex items-center gap-6">
           <Link to="/" className="hover:opacity-80 transition-opacity">
-            <div className="logo-wrap h-10 w-10 relative flex items-center justify-center">
+            <div className="logo-wrap h-12 w-12 relative flex items-center justify-center">
               <img
   src="/Logo.png"
   alt="Logo"
@@ -63,8 +63,8 @@ export const Navbar = () => {
     absolute
     left-1/2
     top-1/2
-    w-[140%]
-    h-[140%]
+    w-[150%]
+    h-[150%]
     object-contain
     -translate-x-1/2
     -translate-y-1/2

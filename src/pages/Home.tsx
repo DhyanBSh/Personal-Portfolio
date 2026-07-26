@@ -1,224 +1,76 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ParallaxLayer } from '../components/ParallaxLayer';
 import { useBackgroundTransition } from '../hooks/useBackgroundTransition';
 import { RecentProjects } from '../components/RecentProjects';
+import { FeaturedProjects } from '../components/FeaturedProjects';
+import { Testimonials } from '../components/Testimonials';
+import { TrustSection } from '../components/TrustSection';
+import HeroNew from '../components/HeroNew';
 
+// Softer curve + slightly less blur than before: blur is expensive to paint and a lighter
+// touch reads as smoother, especially when several items stagger in at once.
 const sectionVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 },
-  visible: { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
-};
-
-
-
-const Hero = () => {
-  const { backgroundColor } = useBackgroundTransition();
-  const isDark = backgroundColor === 'black';
-
-  // Mouse motion system
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const smoothX = useSpring(mouseX, { stiffness: 80, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 80, damping: 20 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { innerWidth, innerHeight } = window;
-
-    mouseX.set(e.clientX / innerWidth - 0.5);
-    mouseY.set(e.clientY / innerHeight - 0.5);
-  };
-
-  return (
-    <section
-      onMouseMove={handleMouseMove}
-      className={`relative isolate h-screen w-full overflow-hidden pt-20 transition-colors duration-500 ${
-        isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
-      }`}
-    >
-      {/* Mouse reactive glow layer */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          background: isDark
-            ? 'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,0.12), transparent 40%)'
-            : 'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(0,0,0,0.08), transparent 40%)',
-        }}
-        animate={
-          {
-            '--x': smoothX,
-            '--y': smoothY,
-          } as any
-        }
-      />
-
-      {/* Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <motion.img
-          initial={{ scale: 1.4, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          src="/HeroBG1.png"
-          alt="Hero Background"
-          style={{
-            x: useTransform(smoothX, [-0.5, 0.5], [-25, 25]),
-            y: useTransform(smoothY, [-0.5, 0.5], [-15, 15]),
-          }}
-          className={`
-            w-full h-full
-            object-cover
-            object-[65%_center]
-            md:object-center
-            transition-opacity duration-500
-            ${isDark ? 'opacity-40' : 'opacity-100'}
-          `}
-        />
-      </div>
-
-      {/* Parallax wrapper */}
-      <ParallaxLayer strength={0.2}>
-        <motion.div
-          style={{ y: 0 }}
-          className={`
-            relative z-10
-            h-full w-full
-            flex flex-col
-            justify-center
-            px-6 md:px-12
-          `}
-        >
-          {/* HERO TEXT */}
-          <motion.h1
-            initial={{ opacity: 0, y: 80, filter: "blur(20px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className={`
-              text-[14vw] md:text-[4vw]
-              leading-[0.9]
-              tracking-tighter
-              uppercase
-              font-bold
-              ${isDark ? 'text-white' : 'text-white mix-blend-difference'}
-              relative
-              translate-y-110 md:translate-y-70
-            `}
-          >
-            <div className="opacity-70">Inspired by Nature.</div>
-            <div>Designed with Purpose.</div>
-          </motion.h1>
-        </motion.div>
-      </ParallaxLayer>
-    </section>
-  );
+  hidden: { opacity: 0, y: 32, filter: 'blur(6px)', scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    scale: 1,
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 const CaseStudiesTable = () => {
   const { backgroundColor } = useBackgroundTransition();
   const isDark = backgroundColor === 'black';
 
-  const services = [
-    { partner: 'UI / UX Designing', platform: 'Modern, user-focused designs for web & mobile experiences.', services: '-->', label: '01' },
-    { partner: 'Logo Designing', platform: 'Crafted to build a recognizable brand identity that leaves a lasting impression.', services: '-->', label: '02' },
-    { partner: 'Banner / Flyer Designing', platform: 'Eye-catching visuals crafted for maximum impact.', services: '-->', label: '03' },
-    { partner: 'Video Editing', platform: 'Creative, polished videos with smooth storytelling.', services: '-->', label: '04' },
-    { partner: 'Product Designing', platform: 'Innovative 3D product concepts brought to life.', services: '-->', label: '05' },
-  ];
-
   return (
-    <section className={`px-6 md:px-12 py-16 md:py-24 transition-colors duration-500 ${
+    <section className={`px-6 md:px-12 py-16 md:py-20 transition-colors duration-500 ${
       isDark 
         ? 'bg-[#000000] border-white/10' 
         : 'bg-[#fcfcfc] border-black/10'
     } border-b`}>
       
-      <motion.h2 
-        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={sectionVariants}
-        className={`text-[28px] md:text-[40px] lg:text-[48px] font-medium tracking-tight leading-[1.05] max-w-[1400px] mb-24 md:mb-32 transition-colors duration-500 ${
-          isDark ? 'text-white' : 'text-[#111]'
-        }`}
-      >
-        <motion.span variants={itemVariants}>I build the seamless, user-friendly digital products that turn complex vision into a simple reality. </motion.span>
-        <motion.span variants={itemVariants}>I am a Software Engineering graduate passionate about UI/UX and user-centered design. Skilled in React, JavaScript, Spring Boot, and full-stack development, </motion.span>
-        <motion.span variants={itemVariants}>I create intuitive, scalable, and accessible digital experiences. Driven to bridge design and technology to deliver impactful solutions. </motion.span>
-      </motion.h2>
-      <h3 className={`text-[16px] uppercase font-bold tracking-widest mb-8 transition-colors duration-500 ${
-        isDark ? 'text-white/40' : 'text-black/40'
-      }`}>My Services</h3>
+      <motion.h2
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, margin: "-100px" }}
+  variants={sectionVariants}
+  className={`w-full max-w-[4000px] text-[28px] sm:text-[36px] md:text-[48px] lg:text-[64px] font-medium tracking-tight leading-[1.15] mb-16 md:mb-16 transition-colors duration-500 ${
+    isDark ? "text-white" : "text-[#111]"
+  }`}
+>
+  <motion.span variants={itemVariants}>
+    I am an <span className="bg-white text-black px-2 py-1">AI-assisted UI/UX Engineer and a Creative Designer,</span>{" "} specializing in
+      User-Centered Creative Design,
+    
+    crafting intuitive, scalable, and impactful digital experiences.
+  </motion.span>
+</motion.h2>
 
-      <div className={`hidden md:flex justify-between items-center text-[12px] uppercase font-bold tracking-widest pb-4 mb-4 border-b transition-colors duration-500 ${
-        isDark ? 'text-white/40 border-white/10' : 'text-black/40 border-black/10'
-      }`}>
-        <div className="w-1/4">Service</div>
-        <div className="w-1/4">Details</div>
-        <div className="w-1/4 text-right"> </div>
-      </div>
-      <ul className={`text-[10px] sm:text-[11px] uppercase font-bold tracking-widest flex flex-col gap-y-4 md:gap-y-0 transition-colors duration-500 ${
-        isDark ? 'text-white' : 'text-[#111]'
-      }`}>
-        {services.map((item, i) => (
-          <motion.li 
-            initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: i * 0.05 }}
-            key={i} 
-            className={`group flex flex-col md:flex-row justify-between md:items-center py-2 md:py-3 md:border-b hover:transition-colors cursor-pointer md:px-2 md:-mx-2 ${
-              isDark 
-                ? 'md:border-white/5 hover:bg-white hover:text-black' 
-                : 'md:border-black/5 hover:bg-[#111] hover:text-white'
-            }`}
-          >
-            <div className="w-full md:w-1/4 mb-1 md:mb-0 flex justify-between md:block">
-              <span className={`md:hidden transition-colors duration-300 ${isDark ? 'text-white/40 group-hover:text-black/60' : 'text-black/40 group-hover:text-white/60'}`}>Partner</span>
-              {item.partner}
-            </div>
-            <div className={`w-full md:w-1/4 mb-2 md:mb-0 flex justify-between md:block transition-colors duration-300 ${
-              isDark 
-                ? 'text-white/60 md:text-white group-hover:text-black' 
-                : 'text-black/60 md:text-[#111] group-hover:text-black'
-            }`}>
-              <span className={`md:hidden transition-colors duration-300 ${isDark ? 'text-white/40 group-hover:text-black/60' : 'text-black/40 group-hover:text-white/60'}`}>Platform</span>
-              {item.platform}
-            </div>
-            <div className={`hidden md:block w-1/4 text-center transition-colors duration-300 font-serif italic lowercase ${
-              isDark ? 'text-white/40 group-hover:text-black/60' : 'text-black/40 group-hover:text-white/60'
-            }`}>( {item.label} )</div>
-            <div className="w-full md:w-1/4 md:text-right overflow-hidden whitespace-nowrap text-ellipsis flex justify-between md:block">
-              <span className={`md:hidden transition-colors duration-300 ${isDark ? 'text-white/40 group-hover:text-black/60' : 'text-black/40 group-hover:text-white/60'}`}>Service</span>
-              <span className="truncate ml-4 md:ml-0">{item.services}</span>
-            </div>
-          </motion.li>
-        ))}
-      </ul>
+
+<motion.h2
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, margin: "-100px" }}
+  variants={sectionVariants}
+  className={`w-full max-w-[4000px] text-[24px] sm:text-[30px] md:text-[36px] font-medium tracking-tight leading-[1.25] mb-16 md:mb-1 transition-colors duration-500 ${
+    isDark ? "text-white" : "text-white/80"
+  }`}
+>
+</motion.h2>
     </section>
   );
 };
 
-const FadingText = () => {
-  const { backgroundColor } = useBackgroundTransition();
-  const isDark = backgroundColor === 'black';
-
-  return (
-    <section className={`px-6 md:px-12 py-2 md:py-5 transition-colors duration-500 ${
-      isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
-    }`}>
-      <motion.h2 
-        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={sectionVariants}
-        className={`text-[40px] md:text-[6vw] leading-[1.1] font-bold tracking-tighter uppercase transition-colors duration-500`}
-      >
-        <motion.div variants={itemVariants} className={isDark ? 'text-white' : 'text-[#111]'}>INNOVATION IS CONNECTION.</motion.div>
-        <motion.div variants={itemVariants} className={isDark ? 'text-white/40' : 'text-black/40'}>I BRING IDEAS & EXECUTION,</motion.div>
-        <motion.div variants={itemVariants} className={isDark ? 'text-white/60' : 'text-black/60'}>TRANSFORMING VISION</motion.div>
-        <motion.div variants={itemVariants} className={isDark ? 'text-white/80' : 'text-black/80'}>INTO SEAMLESS, IMPACTFUL</motion.div>
-        <motion.div variants={itemVariants} className={isDark ? 'text-white' : 'text-[#111]'}>DIGITAL EXPERIENCES.</motion.div>
-      </motion.h2>
-    </section>
-  );
-};
 
 const Showreel = () => {
   const { backgroundColor } = useBackgroundTransition();
@@ -226,7 +78,7 @@ const Showreel = () => {
 
   return (
     <ParallaxLayer strength={0.1}>
-      <section className={`px-6 md:px-12 pb-24 md:pb-32 transition-colors duration-500 ${
+      <section className={`px-6 md:px-12 pb-24 md:pb-2 transition-colors duration-500 ${
         isDark ? 'bg-[#000000]' : 'bg-[#fcfcfc]'
       }`}>
         <Link to="/portfolio" className="block w-full">
@@ -238,12 +90,15 @@ const Showreel = () => {
           
             <div className="absolute inset-0">
             <div data-parallax data-parallax-depth="0.03" className="absolute inset-0">
+              {/* Only the scale breathes now — that's a cheap transform. The grayscale
+                  toggle was fighting the hover:grayscale-0 transition below, which caused
+                  a visible stutter whenever a hover landed mid-cycle. Hover now owns color. */}
               <motion.img
-                animate={{ scale: [1, 1.03, 1], filter: ['grayscale(100%)', 'grayscale(0%)', 'grayscale(100%)'] }}
+                animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: 36, repeat: Infinity, ease: 'easeInOut', repeatType: 'mirror' }}
                 src="/Home BG.png"
-                className={`w-full h-full object-cover object-center group-hover:grayscale-0 transition-all duration-1000 will-change-transform ${
-                  isDark ? 'grayscale-0 opacity-100' : 'grayscale'
+                className={`w-full h-full object-cover object-center grayscale transition-all duration-1000 will-change-transform group-hover:grayscale-0 ${
+                  isDark ? 'grayscale-0 opacity-100' : ''
                 }`}
                 referrerPolicy="no-referrer"
               />
@@ -254,7 +109,7 @@ const Showreel = () => {
             isDark ? 'text-black' : 'text-black'
           }`}>
             <div className="text-[10px] font-bold uppercase tracking-widest mix-blend-difference flex items-center gap-2 group-hover:opacity-50 transition-opacity">
-              Visit My Portfolio <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              More Projects <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </div>
             <div className="md:absolute right-12 text-[10px] font-bold uppercase tracking-widest mix-blend-difference opacity-70">
               Dhyan Bhashitha Jayasinghe
@@ -275,11 +130,12 @@ export const Home = () => {
     <main className={`transition-colors duration-500 ${
       isDark ? 'bg-[#000000] text-white' : 'bg-[#fcfcfc] text-[#111]'
     }`}>
-      <Hero />
+      <HeroNew />
       <CaseStudiesTable />
-      <RecentProjects />
-      <FadingText />
+      <TrustSection />
+      <FeaturedProjects />
       <Showreel />
+      <Testimonials />
     </main>
   );
 };

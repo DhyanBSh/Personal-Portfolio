@@ -1,5 +1,8 @@
+import { useState, type FormEvent } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Phone, MapPin, MessageSquare } from 'lucide-react';
+import { ArrowRight, Phone, MessageSquare } from 'lucide-react';
+
+const WHATSAPP_NUMBER = '94727332649';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -8,27 +11,61 @@ const sectionVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 },
-  visible: { opacity: 1, y: 0, filter: 'blur(0px)', scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    scale: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
-export const Contact = () => (
-  <main className="pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 bg-[#fcfcfc] min-h-screen text-[#111] overflow-hidden">
-    <motion.section 
-      initial="hidden" animate="visible" variants={sectionVariants}
-      className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24"
-    >
-      <div className="lg:col-span-6 flex flex-col">
-        <motion.span variants={itemVariants} className="text-[10px] uppercase tracking-[0.3em] font-bold text-black/40 block mb-6">Hello...</motion.span>
-        <motion.h1 
-          initial={{ opacity: 0, y: 60, filter: 'blur(20px)', scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[48px] sm:text-[64px] md:text-[80px] lg:text-[100px] leading-[0.85] tracking-tighter uppercase font-bold mb-16 md:mb-24 cinematic-reveal"
-        >
-          Let's Talk
-        </motion.h1>
+export const Contact = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [project, setProject] = useState('');
 
-        {/* Quick action icons: Call and WhatsApp */}
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const message = `New Portfolio Inquiry
+
+Name: ${name}
+Email: ${email}
+
+Project Details:
+${project}`;
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <main className="pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 bg-[#fcfcfc] min-h-screen text-[#111] overflow-hidden">
+      <motion.section
+        initial="hidden"
+        animate="visible"
+        variants={sectionVariants}
+        className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24"
+      >
+        <div className="lg:col-span-6 flex flex-col">
+          <motion.span
+            variants={itemVariants}
+            className="text-[10px] uppercase tracking-[0.3em] font-bold text-black/40 block mb-6"
+          >
+            Hello...
+          </motion.span>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 60, filter: 'blur(20px)', scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+            transition={{ duration: 1.2, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[48px] sm:text-[64px] md:text-[80px] lg:text-[100px] leading-[0.85] tracking-tighter uppercase font-bold mb-16 md:mb-24 cinematic-reveal"
+          >
+            Let's Talk
+          </motion.h1>
+
+           {/* Quick action icons: Call and WhatsApp */}
         <div className="flex items-center gap-4 mb-12">
           <a href="tel:+94763932043" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="Call">
             <Phone className="w-5 h-5" />
@@ -48,14 +85,12 @@ export const Contact = () => (
             <img src="/icons/behance.svg" alt="Behance" className="w-5 h-5 object-contain filter invert group-hover:invert-0 transition-all duration-200" loading="lazy" />
           </a>
 
-
           <a href="https://www.linkedin.com/in/dhyan-jayasinghe-697324228/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="LinkedIn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden>
               <path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4V24h-4zM8.5 8h3.8v2.16h.05c.53-.99 1.83-2.04 3.77-2.04 4.03 0 4.78 2.65 4.78 6.09V24h-4v-7.31c0-1.74-.03-3.99-2.43-3.99-2.43 0-2.8 1.9-2.8 3.86V24h-4z" />
             </svg>
           </a>
         </div>
-
 
         <motion.div variants={sectionVariants} className="space-y-12">
           <motion.div variants={itemVariants}>
@@ -74,35 +109,74 @@ export const Contact = () => (
             <p className="text-lg md:text-xl font-medium tracking-tight flex items-center gap-3"> Matara, Sri Lanka</p>
           </motion.div>
         </motion.div>
-      </div>
+        </div>
 
-      
+        <div className="lg:col-span-6 flex flex-col justify-start">
+          <form className="w-full" onSubmit={handleSubmit}>
+            <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="space-y-10">
+              <motion.div
+                variants={itemVariants}
+                className="group border-b border-white/10 pb-4 focus-within:border-white transition-colors"
+              >
+                <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="BabyBoB"
+                  className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20"
+                  required
+                />
+              </motion.div>
 
-      <div className="lg:col-span-6 flex flex-col justify-start">
-        <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-          <motion.div 
-            initial="hidden" animate="visible" variants={sectionVariants}
-            className="space-y-10"
-          >
-            <motion.div variants={itemVariants} className="group border-b border-white/20 pb-4 focus-within:border-white transition-colors">
-              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">Your Name</label>
-              <input type="text" className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20" placeholder="BabyBob" />
+              <motion.div
+                variants={itemVariants}
+                className="group border-b border-white/10 pb-4 focus-within:border-white transition-colors"
+              >
+                <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="babybob@example.com"
+                  className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20"
+                  required
+                />
+              </motion.div>
+
+              <motion.div
+                variants={itemVariants}
+                className="group border-b border-white/10 pb-4 focus-within:border-white transition-colors"
+              >
+                <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">
+                  Project Details
+                </label>
+                <textarea
+                  rows={4}
+                  value={project}
+                  onChange={(e) => setProject(e.target.value)}
+                  placeholder="Tell me about your project"
+                  className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20 resize-none"
+                  required
+                />
+              </motion.div>
+
+              <motion.button
+                variants={itemVariants}
+                type="submit"
+                className="w-full py-6 border border-[#111] text-[#111] group flex justify-between items-center px-8 text-xs uppercase tracking-widest font-bold hover:bg-[#111] hover:text-white transition-colors mt-12 bg-transparent"
+              >
+                Share your Request
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
             </motion.div>
-            <motion.div variants={itemVariants} className="group border-b border-white/20 pb-4 focus-within:border-white transition-colors">
-              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">Email Address</label>
-              <input type="email" className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20" placeholder="babybob@example.com" />
-            </motion.div>
-            <motion.div variants={itemVariants} className="group border-b border-white/20 pb-4 focus-within:border-white transition-colors">
-              <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 block mb-2 origin-left transform transition-all duration-300 group-focus-within:-translate-y-1 group-focus-within:scale-110 group-focus-within:text-[#111]">Project Details</label>
-              <textarea rows={4} className="w-full bg-transparent text-lg md:text-xl font-medium focus:outline-none placeholder:text-white/20 resize-none" placeholder="Tell me about your objectives..."></textarea>
-            </motion.div>
-            <motion.button variants={itemVariants} className="w-full py-6 border border-[#111] text-[#111] group flex justify-between items-center px-8 text-xs uppercase tracking-widest font-bold hover:bg-[#111] hover:text-white transition-colors mt-12 bg-transparent">
-              Share your Idea
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
-          </motion.div>
-        </form>
-      </div>
-    </motion.section>
-  </main>
-);
+          </form>
+        </div>
+      </motion.section>
+    </main>
+  );
+};

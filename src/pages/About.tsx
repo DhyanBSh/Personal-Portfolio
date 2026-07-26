@@ -36,13 +36,13 @@ export const About = () => {
 
       <motion.section 
         initial="hidden" animate="visible" variants={sectionVariants}
-        className="max-w-7xl mx-auto relative z-10 mt-30 md:mt10"
+        className="max-w-7xl mx-auto relative z-10 mt-20 md:mt10"
       >
         {/* Main Heading with Text Reveal */}
         <ParallaxLayer strength={0.2}>
           <motion.div variants={itemVariants} className="mt-10 md:mt-10 mb-10 md:mb-10">
             <TextReveal
-              text="My  approach  blends  creativity  and  problem-solving  to  build  experiences  that not  only  look  good,  but  feel right.  I  care  about  the details  that  make  digital  products  more  human,  more  enjoyable,  and  more  impactful."
+              text="I help businesses to design impactful brands, seamless interfaces, and engaging digital experiences. From user-centered products to creative visual identities, every project is approached with a focus on purpose and excellence."
               className="text-[32px] sm:text-[40px] md:text-[56px] lg:text-[56px] leading-[1.05] tracking-tight font-medium"
               threshold={0.15}
               duration={0.02}
@@ -60,13 +60,13 @@ export const About = () => {
           <ParallaxLayer strength={0.15} className="md:col-span-6">
             <motion.div variants={itemVariants} className={`flex flex-col gap-8 text-xl md:text-2xl font-medium tracking-tight leading-[1.4]`}>
               <TextReveal
-                text="I am a Final Year Undergraduate, following B.Sc. Hons. in Software Engineering at General Sir John Kotelawala Defence University, Ratmalana, Sri Lanka."
+                text="I am a Software Engineering graduate, Creative and UI/UX Designer with a passion for crafting premium digital experiences."
                 as="p"
                 threshold={0.15}
                 duration={0.02}
               />
               <TextReveal
-                text="I am passionate in UI/UX Designing, Product Designing, Video Editing and Photography, with an eye for Visual Storytelling. I design attractive, simple, and clean UI interfaces, along with creative and detailed graphics such as Flyer Designs, Banner Designs, Event Screens & Logo Designs."
+                text="I believe great design should do more than solve problems, it should create lasting impressions. By combining technical expertise with a refined design perspective, I help brands build meaningful experiences that stand out in an increasingly competitive world."
                 as="p"
                 threshold={0.15}
                 duration={0.02}
@@ -204,54 +204,72 @@ export const About = () => {
           </motion.div>
         </ParallaxLayer>
 
+        {/* Editorial image gallery */}
+        <ParallaxLayer strength={0.08}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={sectionVariants}
+            className="pt-8 md:pt-16"
+          >
+            <div className="mb-8 flex items-end justify-between gap-6 border-b border-current/20 pb-5 md:mb-10">
+              <h3 className="text-4xl font-normal leading-none tracking-[-0.04em] md:text-6xl">
+                Me behind the work
+              </h3>
+              <span className="hidden pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] opacity-50 sm:block">
+                Selected moments / 2023-26
+              </span>
+            </div>
 
-        {/* Collaborative and Leadership Experience */}
-        <ParallaxLayer strength={0.1}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={sectionVariants}>
-            <h3 className={`text-[16px] uppercase tracking-widest font-bold mb-4 ${
-              isDark ? 'text-white/40' : 'text-white/40'
-            }`}>COLLABORATIVE AND LEADERSHIP EXPERIENCE</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Executive Committee (Editor) - Rotaract Club of KDU (2023 - 2024)</div>
-                <ul className={`list-disc ml-5 mt-2 ${isDark ? 'text-white/70' : 'text-white/70'}`}>
-                  <li>Managed content creation and publication for 200+ member organization</li>
-                  <li>Overlooked 5+ community service projects reaching 1000+ beneficiaries</li>
-                  <li>Implemented social media strategy increasing online presence by 150%</li>
-                </ul>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Director of Digital Services - Rotaract Club of KDU (2022 - 2023)</div>
-                <div className={`${isDark ? 'text-white/70' : 'text-white/70'}`}>Led digital transformation initiatives improving member engagement by 35%</div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Director of Arts - British Computer Society of KDU (2023 - 2024)</div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Organizing Committee (Design Team) - IEEE Student Branch of KDU (2023 – 2024)</div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Director of Arts - Drama Club of KDU (2023 - 2024)</div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Member - Leo Club, Media Club, SEDS, Music Club of KDU</div>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <div className={`font-semibold ${isDark ? 'text-white' : 'text-white'}`}>Selected Achievements</div>
-                <ul className={`list-disc ml-5 mt-2 ${isDark ? 'text-white/70' : 'text-white/70'}`}>
-                  <li>Master Designer 2026 Inter-University Designathon - 1 RunnerUp</li>
-                  <li>Mora UX - Top 10 Teams</li>
-                  <li>IX 24 Inter-University Designathon - Participant</li>
-                  <li>All Island Inter-School Classical Music Competition (2011, 2012, 2013, 2014, 2016)</li>
-                  <li>Completed Bhatkhande Sangit Vidyapith Examination of Visharad - Violin</li>
-                </ul>
-              </motion.div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6">
+              {[
+                {
+                  image: "/DNA/dna1.webp",
+                  alt: 'Creative team working in a bright studio',
+                  layout: 'md:col-span-7 aspect-[1.25] md:aspect-[1.4]',
+                },
+                {
+                  image: "/DNA/dna2.webp",
+                  alt: 'Team collaborating around a table',
+                  layout: 'md:col-span-5 aspect-[1.15] md:aspect-[0.9] md:mt-24',
+                },
+                {
+                  image: "/DNA/dna3.webp",
+                  alt: 'Minimal creative studio interior',
+                  layout: 'md:col-span-5 aspect-square md:mt-6',
+                },
+                {
+                  image: "/DNA/dna4.webp",
+                  alt: 'People sharing ideas during a workshop',
+                  layout: 'md:col-span-7 aspect-[1.25] md:aspect-[1.5]',
+                },
+                {
+                  image: "/DNA/dna5.webp",
+                  alt: 'Designer working on a digital interface',
+                  layout: 'md:col-span-4 aspect-[0.9] md:mt-20',
+                },
+                {
+                  image: "/DNA/dna6.webp",
+                  alt: 'Creative team in a project discussion',
+                  layout: 'md:col-span-8 aspect-[1.5]',
+                },
+              ].map((item) => (
+                <motion.figure
+                  key={item.image}
+                  variants={itemVariants}
+                  className={`group relative overflow-hidden rounded-[4px] border ${
+                    isDark ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'
+                  } ${item.layout}`}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.alt}
+                    loading="lazy"
+                    className="h-full w-full object-cover grayscale transition duration-1000 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04] group-hover:grayscale-0"
+                  />
+                </motion.figure>
+              ))}
             </div>
           </motion.div>
         </ParallaxLayer>

@@ -40,6 +40,9 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
   const texturesRef = useRef<Map<string, THREE.Texture>>(new Map());
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+  const [hoveredItem, setHoveredItem] = useState<PortfolioItem | null>(null);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+  const [texturesVersion, setTexturesVersion] = useState(0);
   const rotationRef = useRef({ x: 0, y: 0 });
   const targetRotationRef = useRef({ x: 0, y: 0 });
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -145,6 +148,7 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       try {
         await Promise.all(items.map((item, idx) => loadTexture(item.img, idx)));
         texturesRef.current = loadedTextures;
+        setTexturesVersion((version) => version + 1);
       } catch (err) {
         console.error('Error loading textures:', err);
       }
@@ -192,6 +196,7 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
 
     // Position items in a circular line
     const itemCount = items.length;
+    const cardTextureLoader = new THREE.TextureLoader();
 
     items.forEach((item, index) => {
       // Arrange projects in a line (circular band)
@@ -204,24 +209,39 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       const y = 0;
 
       // Create card
-      const geometry = new THREE.PlaneGeometry(5.2, 6.4);
+      const geometry = new THREE.PlaneGeometry(6.4, 7.8);
       
-      // Get texture or create fallback
-      let material: THREE.MeshPhongMaterial | THREE.MeshBasicMaterial;
+      // Use the project image for every card face.
+      let material: THREE.MeshBasicMaterial;
       const texture = texturesRef.current.get(item.img);
-      
+
       if (texture && texture.image) {
-        // Use BasicMaterial for better image visibility
         material = new THREE.MeshBasicMaterial({
           map: texture,
           toneMapped: false,
         });
       } else {
-        // Fallback material with color
-        const colors = [0xFF6B6B, 0x4ECDC4, 0x45B7D1, 0xFFA07A, 0x98D8C8, 0xF7DC6F];
         material = new THREE.MeshBasicMaterial({
-          color: colors[index % colors.length],
+          color: 0xffffff,
+          toneMapped: false,
         });
+
+        cardTextureLoader.load(
+          item.img,
+          (loadedTexture) => {
+            loadedTexture.colorSpace = THREE.SRGBColorSpace;
+            material.map = loadedTexture;
+            material.needsUpdate = true;
+          },
+          undefined,
+          () => {
+            cardTextureLoader.load(getPlaceholderImage(index), (fallbackTexture) => {
+              fallbackTexture.colorSpace = THREE.SRGBColorSpace;
+              material.map = fallbackTexture;
+              material.needsUpdate = true;
+            });
+          }
+        );
       }
 
       const card = new THREE.Mesh(geometry, material);
@@ -234,13 +254,36 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       sphereGroup.add(card);
     });
 
-    // Mouse tracking
+    // Mouse tracking and card hover detection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const updateHoveredCard = (event: MouseEvent) => {
+      const bounds = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+
+      const hoveredCard = raycaster.intersectObjects(sphereGroup.children)[0]?.object;
+      const item = hoveredCard?.userData?.item as PortfolioItem | undefined;
+
+      if (item) {
+        setHoveredItem(item);
+        setHoverPosition({ x: event.clientX, y: event.clientY });
+      } else {
+        setHoveredItem(null);
+      }
+    };
+
     const onMouseDown = (event: MouseEvent) => {
       isDraggingRef.current = true;
       mouseRef.current = { x: event.clientX, y: event.clientY };
+      setHoveredItem(null);
     };
 
     const onMouseMove = (event: MouseEvent) => {
+      updateHoveredCard(event);
+
       if (!isDraggingRef.current) return;
 
       const deltaX = event.clientX - mouseRef.current.x;
@@ -256,20 +299,23 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       isDraggingRef.current = false;
     };
 
+    const onMouseLeave = () => {
+      isDraggingRef.current = false;
+      setHoveredItem(null);
+    };
+
     renderer.domElement.addEventListener('mousedown', onMouseDown);
     renderer.domElement.addEventListener('mousemove', onMouseMove);
     renderer.domElement.addEventListener('mouseup', onMouseUp);
-    renderer.domElement.addEventListener('mouseleave', onMouseUp);
+    renderer.domElement.addEventListener('mouseleave', onMouseLeave);
 
     // Raycaster for click detection
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
     const onCardClick = (event: MouseEvent) => {
-      if (isDraggingRef.current && Math.abs(event.clientX - mouseRef.current.x) > 5) return;
+      if (isDraggingRef.current) return;
 
-      mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-      mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+      const bounds = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
 
@@ -293,6 +339,10 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
 
 const animate = () => {
   animationFrameId = requestAnimationFrame(animate);
+
+  if (!isDraggingRef.current) {
+    targetRotationRef.current.y += 0.00045;
+  }
 
   rotationRef.current.x +=
     (targetRotationRef.current.x - rotationRef.current.x) * 0.1;
@@ -331,7 +381,7 @@ animate();
   renderer.domElement.removeEventListener('mousedown', onMouseDown);
   renderer.domElement.removeEventListener('mousemove', onMouseMove);
   renderer.domElement.removeEventListener('mouseup', onMouseUp);
-  renderer.domElement.removeEventListener('mouseleave', onMouseUp);
+  renderer.domElement.removeEventListener('mouseleave', onMouseLeave);
   renderer.domElement.removeEventListener('click', onCardClick);
 
   cancelAnimationFrame(animationFrameId);
@@ -358,7 +408,7 @@ animate();
 
   renderer.dispose();
 };
-  }, [items, isMobile]);
+  }, [items, isMobile, texturesVersion]);
 
   return (
     <div className="relative w-full h-screen bg-[#0a0a0a]">
@@ -414,8 +464,10 @@ animate();
             >
               {/* Close Button */}
               <button
+                type="button"
+                aria-label="Close project details"
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-0 right-0 z-10 p-2 hover:bg-white/10 rounded-lg transition text-white"
+                className="absolute right-0 top-0 z-10 rounded-lg p-2 text-white mix-blend-difference transition hover:bg-white/10"
               >
                 <X size={24} />
               </button>
@@ -502,6 +554,16 @@ img.src = getPlaceholderImage(idx >= 0 ? idx : 0);
       </AnimatePresence>
 
       {/* Instructions overlay */}
+      {!isMobile && hoveredItem && (
+        <div
+          className="pointer-events-none fixed z-20 -translate-x-1/2 -translate-y-full border border-white/30 bg-black/85 px-4 py-3 text-center text-white backdrop-blur-sm"
+          style={{ left: hoverPosition.x, top: hoverPosition.y - 18 }}
+        >
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/55">Project</p>
+          <p className="mt-1 text-lg font-medium tracking-tight">{hoveredItem.partner}</p>
+        </div>
+      )}
+
       {!isMobile && (
         <div className="absolute top-36 sm:top-24 left-1/2 -translate-x-1/2 z-10 text-white/60 text-sm text-center">
           <p>Drag to rotate • Click to view details</p>

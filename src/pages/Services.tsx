@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Testimonials } from '../components/Testimonials';
 
 const sectionVariants = {
   hidden: { opacity: 0 },
@@ -12,11 +13,11 @@ const itemVariants = {
 };
 
 const numberedServices = [
-  { title: "UI / UX Designing", img: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop" },
-  { title: "Logo Designing", img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop" },
-  { title: "Banner / Flyer Designing", img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" },
-  { title: "Video Editing", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" },
-  { title: "Product Designing", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" },
+  { title: "UI / UX Designing", img: "/Services/UI.webp" },
+  { title: "Logo Designing", img: "/Services/Logo.webp" },
+  { title: "Banner / Flyer Designing", img: "/Services/Flyer.webp" },
+  { title: "Video Editing", img: "/Services/Video.webp" },
+  { title: "Product Designing", img: "/Services/Product.webp" },
 ];
 
 export const Services = () => {
@@ -32,18 +33,18 @@ export const Services = () => {
       >
         <motion.h2 
           variants={itemVariants} 
-          className="text-[48px] sm:text-[64px] md:text-[8vw] lg:text-[7vw] xl:text-[100px] leading-[0.9] tracking-tighter uppercase font-bold text-[#111]"
+          className="text-[48px] sm:text-[64px] md:text-[8vw] lg:text-[7vw] xl:text-[80px] leading-[0.9] tracking-tighter uppercase font-bold text-[#111]"
         >
-          Crafting intuitive digital experiences<br/>
-          impactful visuals, and creative solutions<br/>
-          <span className="text-black/30">tailored for modern brands.</span>
+          Building trusted digital experiences<br/>
+          <span className="text-white/40">through strategic design, thoughtful interactions, and creative solutions </span>
+          that move brands forward.<br/>
         </motion.h2>
       </motion.section>
 
       {/* Page 2 Middle: 3-column services breakdown WITH INTERACTIVE HOVER  */}
       <motion.section 
         initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={sectionVariants}
-        className="px-6 md:px-12 mb-32 md:mb-48"
+        className="px-6 md:px-12 mb-32 md:mb-8"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
           {/* Sub-column 1: Small meta list */}
@@ -97,7 +98,9 @@ export const Services = () => {
           </motion.div>
         </div>
       </motion.section>
+      <Testimonials />
 
     </main>
+    
   );
 };

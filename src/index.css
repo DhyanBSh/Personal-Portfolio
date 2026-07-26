@@ -247,9 +247,9 @@ section .cinematic-reveal {
 .logo-wrap img.opacity-0 { opacity: 0 !important; }
 .logo-wrap img.opacity-100 { opacity: 1 !important; }
 
-/* Make the main Logo.png slightly larger when visible without affecting layout */
+/* Make the main Logo.png noticeably larger when visible without affecting layout */
 .logo-large {
-  transform: scale(1.28) !important;
+  transform: scale(1.4) !important;
 }
 
 
