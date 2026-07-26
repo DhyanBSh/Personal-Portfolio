@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { Testimonials } from '../components/Testimonials';
 
 const sectionVariants = {
@@ -25,82 +27,94 @@ export const Services = () => {
 
   return (
     <main className="bg-[#fcfcfc] text-[#111] overflow-hidden">
-
-      {/* Page 1 Bottom / Page 2 Top: Massive Typography Ecosystem block */}
-      <motion.section 
-        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={sectionVariants}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={sectionVariants}
         className="px-6 md:px-12 mb-24 md:mb-32 mt-40 md:mt-40"
       >
-        <motion.h2 
-          variants={itemVariants} 
-          className="text-[48px] sm:text-[64px] md:text-[8vw] lg:text-[7vw] xl:text-[80px] leading-[0.9] tracking-tighter uppercase font-bold text-[#111]"
+        <motion.h2
+          variants={itemVariants}
+          className="text-[48px] sm:text-[64px] md:text-[8vw] lg:text-[7vw] xl:text-[64px] leading-[0.9] tracking-tighter uppercase font-bold text-[#111]"
         >
-          Building trusted digital experiences<br/>
-          <span className="text-white/40">through strategic design, thoughtful interactions, and creative solutions </span>
-          that move brands forward.<br/>
+          Let's build a trusted digital experience<br />
+          <span className="text-white/40">
+            through strategic design, thoughtful interactions, and creative solutions,
+          </span>
+          that move your brand forward.<br />
         </motion.h2>
       </motion.section>
 
-      {/* Page 2 Middle: 3-column services breakdown WITH INTERACTIVE HOVER  */}
-      <motion.section 
-        initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={sectionVariants}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={sectionVariants}
         className="px-6 md:px-12 mb-32 md:mb-8"
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
-          {/* Sub-column 1: Small meta list */}
           <motion.div variants={itemVariants} className="lg:col-span-3">
-            <h3 className="text-[10px] uppercase tracking-widest font-bold mb-8 text-black/50">( a. ) APPROACH</h3>
-            <ul className="text-[9px] uppercase font-bold tracking-widest space-y-3 text-black/80">
-              <li>- DIGITAL BUSINESS MODEL</li>
-              <li>- GROWTH ROADMAP DEFINITION</li>
-              <li>- BRAND POSITIONING IN MARKETS</li>
-              <li>- OMNICHANNEL COMMERCE STRATEGY</li>
+            <h3 className="text-[12px] uppercase tracking-widest font-bold mb-8 text-white/50">
+              ( * ) APPROACH
+            </h3>
+            <ul className="text-[11px] uppercase font-bold tracking-widest space-y-3 text-white/80">
+              <li>- Reach Out</li>
+              <li>- Share the Vision</li>
+              <li>- I Design the Solution</li>
+              <li>- Review and Launch</li>
+              <li>- Or just say Hi..</li>
             </ul>
           </motion.div>
-          
-          {/* Sub-column 2: Interactive Vertical UI/Image */}
-          <motion.div variants={itemVariants} className="lg:col-span-4 h-[50vh] lg:h-[70vh] bg-black/5 overflow-hidden group relative">
+
+          <motion.div
+            variants={itemVariants}
+            className="lg:col-span-4 h-[50vh] lg:h-[70vh] bg-black/5 overflow-hidden group relative"
+          >
             <AnimatePresence mode="popLayout">
-              <motion.img 
+              <motion.img
                 key={activeIndex}
                 initial={{ opacity: 0, scale: 1.05 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                src={numberedServices[activeIndex].img} 
-                alt={numberedServices[activeIndex].title} 
+                src={numberedServices[activeIndex].img}
+                alt={numberedServices[activeIndex].title}
                 className="w-full h-full object-cover absolute inset-0 grayscale group-hover:grayscale-0 transition-all duration-[1.5s]"
                 referrerPolicy="no-referrer"
               />
             </AnimatePresence>
+            
           </motion.div>
-          
-          {/* Sub-column 3: Numbered Services List */}
+
           <motion.div variants={itemVariants} className="lg:col-span-5 lg:pl-16 pt-8 lg:pt-0">
             <ul className="space-y-4 md:space-y-5" onMouseLeave={() => setActiveIndex(0)}>
               {numberedServices.map((service, idx) => (
-                <li 
-                  key={idx} 
+                <li
+                  key={idx}
                   onMouseEnter={() => setActiveIndex(idx)}
                   className={`flex items-start text-lg sm:text-xl md:text-2xl font-medium tracking-tight hover:text-[#111] transition-colors cursor-pointer ${
                     activeIndex === idx ? 'text-[#111]' : 'text-black/30'
                   }`}
                 >
-                  <span className={`text-[11px] font-bold mr-6 mt-[6px] sm:mt-2 shrink-0 transition-colors ${
-                    activeIndex === idx ? 'text-black/60' : 'text-black/30'
-                  }`}>
+                  <span
+                    className={`text-[11px] font-bold mr-6 mt-[6px] sm:mt-2 shrink-0 transition-colors ${
+                      activeIndex === idx ? 'text-black/60' : 'text-black/30'
+                    }`}
+                  >
                     {String(idx + 1).padStart(2, '0')}.
-                  </span> 
+                  </span>
                   {service.title}
                 </li>
               ))}
             </ul>
           </motion.div>
+          
         </div>
-      </motion.section>
-      <Testimonials />
 
+      </motion.section>
+
+      <Testimonials />
     </main>
-    
   );
 };

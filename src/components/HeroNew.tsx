@@ -235,7 +235,7 @@ const HeroNew = () => {
                   transition={{ duration: prefersReducedMotion ? 0 : 1 }}
                   className="block text-white/50"
                 >
-                  I am Designing
+                  Designing
                 </motion.span>
               </motion.div>
 
