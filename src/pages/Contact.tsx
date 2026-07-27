@@ -67,11 +67,11 @@ ${project}`;
 
            {/* Quick action icons: Call and WhatsApp */}
         <div className="flex items-center gap-4 mb-12">
-          <a href="tel:+94763932043" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="Call">
+          <a href="tel:+94727332649" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="Call">
             <Phone className="w-5 h-5" />
           </a>
 
-          <a href="https://wa.me/94763932043" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="WhatsApp">
+          <a href="https://wa.me/94727332649" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-12 h-12 rounded-full border border-[#111] text-[#111] hover:bg-[#111] hover:text-white transition-colors" aria-label="WhatsApp">
             <MessageSquare className="w-5 h-5" />
           </a>
 
@@ -100,8 +100,7 @@ ${project}`;
           <motion.div variants={itemVariants}>
             <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-black/40 mb-4">Phone</h3>
             <div className="flex flex-col gap-2">
-              <a href="tel:+94763932043" className="text-lg md:text-xl font-medium tracking-tight hover:opacity-50 transition-opacity flex items-center gap-3"> +94 76 393 2043</a>
-              <a href="tel:+94776208398" className="text-lg md:text-xl font-medium tracking-tight hover:opacity-50 transition-opacity flex items-center gap-3"> +94 72 733 2649</a>
+              <a href="tel:+94727332649" className="text-lg md:text-xl font-medium tracking-tight hover:opacity-50 transition-opacity flex items-center gap-3"> +94 72 733 2649</a>
             </div>
           </motion.div>
           <motion.div variants={itemVariants}>

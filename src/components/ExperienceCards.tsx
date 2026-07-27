@@ -35,9 +35,9 @@ return ( <div className="inline-block max-w-[520px] rounded-lg border border-whi
 export const ExperienceCards: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
 const items: Experience[] = [
 {
-title: 'UI/UX Engineer (Intern)',
+title: 'UI/UX Engineer - Intern',
 company: 'Irusri Group AB, Sweden',
-date: 'Aug 2025 — July 2026',
+date: 'Aug 2025 — Aug 2026',
 desc:
 'Contributed to end-to-end product and UI/UX work across responsive web and mobile surfaces. Focused on accessibility, prototyping and design handoff.',
 bullets: [
@@ -49,7 +49,7 @@ bullets: [
 {
 title: 'Creative Designer & Photographer',
 company: 'BaByBoB Designs',
-date: '2022 — Present',
+date: '2023 — Present',
 desc: 'Delivered brand systems, UI assets and photographic work for businesses and events.',
 bullets: ['Branding and visual identity', 'UI mockups and deliverables', 'Client-facing project management']
 },

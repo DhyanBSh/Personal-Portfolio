@@ -288,9 +288,6 @@ export const Testimonials = () => {
       </motion.div>
 
       <div className="mt-8 flex items-center justify-between border-t border-current/15 pt-5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-50">
-          Scroll to explore
-        </span>
 
         <div className="flex gap-2">
           <button

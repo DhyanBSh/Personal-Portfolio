@@ -111,9 +111,6 @@ const Showreel = () => {
             <div className="text-[10px] font-bold uppercase tracking-widest mix-blend-difference flex items-center gap-2 group-hover:opacity-50 transition-opacity">
               More Projects <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </div>
-            <div className="md:absolute right-12 text-[10px] font-bold uppercase tracking-widest mix-blend-difference opacity-70">
-              Dhyan Bhashitha Jayasinghe
-            </div>
           </div>
           </div>
         </Link>

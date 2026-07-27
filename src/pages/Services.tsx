@@ -63,7 +63,6 @@ export const Services = () => {
               <li>- Share the Vision</li>
               <li>- I Design the Solution</li>
               <li>- Review and Launch</li>
-              <li>- Or just say Hi..</li>
             </ul>
           </motion.div>
 
