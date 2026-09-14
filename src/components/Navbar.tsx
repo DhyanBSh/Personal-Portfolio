@@ -51,7 +51,7 @@ export const Navbar = () => {
         initial={{ y: -100, opacity: 0, filter: 'blur(10px)' }}
         animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 border-b border-black/20 bg-black/70 backdrop-blur-md transition-all"
+        className="mobile-navbar fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 border-b border-black/20 bg-black/70 backdrop-blur-md transition-all"
       >
         <div className="flex items-center gap-6">
           <Link to="/" className="hover:opacity-80 transition-opacity">
@@ -99,7 +99,7 @@ export const Navbar = () => {
         initial={{ y: -100, opacity: 0, filter: 'blur(10px)' }}
         animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-        className="fixed top-[72px] left-0 right-0 z-40 md:hidden flex justify-start gap-8 px-6 py-4 border-b border-black/20 bg-black/70 backdrop-blur-md transition-all"
+        className="mobile-navbar fixed top-[72px] left-0 right-0 z-40 md:hidden flex justify-start gap-8 px-6 py-4 border-b border-black/20 bg-black/70 backdrop-blur-md transition-all"
       >
         <Link to="/about" className="text-[11px] uppercase tracking-[0.2em] font-bold text-white hover:opacity-80 transition-opacity">DNA</Link>
         <Link to="/services" className="text-[11px] uppercase tracking-[0.2em] font-bold text-white hover:opacity-80 transition-opacity">Services</Link>

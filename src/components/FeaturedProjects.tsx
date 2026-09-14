@@ -4,32 +4,25 @@ import { useBackgroundTransition } from '../hooks/useBackgroundTransition';
 
 const featuredProjects = [
   {
-    title: 'Envira',
-    category: 'Brand identity / Digital experience',
-    description: 'A clear, confident digital home for a Danish climate intelligence firm.',
-    image: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=2200&auto=format&fit=crop',
-    year: '2024',
+    title: 'Growva Gardening App - Case Study',
+    category: 'M<obile App Design / UX Research',
+    description: 'Designed a mobile app enabling users to identify plant diseases and receive care recommendations, focused on accessible, intuitive interactions for a non-technical audience.',
+    image: '/Projects/UIUX Designing/Growva Cover.webp',
+    pdfUrl: 'https://www.behance.net/gallery/221672697/Growva-Mobile-App-Design-Case-Study',
   },
   {
-    title: 'ClubNative',
-    category: 'Brand identity / Campaign system',
-    description: 'A playful visual world built to make shift scheduling feel approachable and human.',
-    image: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=2200&auto=format&fit=crop',
-    year: '2024',
+    title: 'Sri Lankan Restaurant Website - Case Study',
+    category: 'Product Designe',
+    description: 'Designed a marketing website for a Japan-based Sri Lankan restaurant, developing a visual identity and user experience that showcases Sri Lankan cultural heritage.',
+    image: '/Projects/UIUX Designing/BandaraCurry Cover.webp',
+    pdfUrl: 'https://www.behance.net/gallery/221671539/Sri-Lankan-Restaurant-Website-Design-Case-Study',
   },
   {
-    title: 'Mason\'s',
-    category: 'Product design / Commerce',
-    description: 'A tactile commerce experience that turns a considered product range into an easy choice.',
-    image: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=2200&auto=format&fit=crop',
-    year: '2023',
-  },
-  {
-    title: '8pm',
+    title: 'MyDialog Mobile App – Redesign',
     category: 'UI / UX design / Strategy',
-    description: 'A flexible digital system for a high-throughput storefront with a sharper point of view.',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=2200&auto=format&fit=crop',
-    year: '2023',
+    description: 'UX redesign of an existing telecom mobile app, restructuring user flows and improving usability across multiple app screens.',
+    image: '/Projects/UIUX Designing/Dialog.png',
+    pdfUrl: 'https://www.behance.net/gallery/229611769/MyDialog-Mobile-App-Redesign',
   },
 ];
 

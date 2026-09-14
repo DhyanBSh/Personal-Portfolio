@@ -60,6 +60,12 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle('mobile-project-open', isMobile && selectedItem !== null);
+
+    return () => document.body.classList.remove('mobile-project-open');
+  }, [isMobile, selectedItem]);
+
   // Load textures with fallback
   useEffect(() => {
     if (isMobile) return;
@@ -178,6 +184,7 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.domElement.style.touchAction = 'none';
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -194,19 +201,33 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
     scene.add(sphereGroup);
     sphereGroupRef.current = sphereGroup;
 
-    // Position items in a circular line
+    // Keep each orbit layer physically separate.
+    // Fill the first inner-wall orbit to a safe card capacity, then create a
+    // new lower orbit when the current orbit reaches its card limit.
     const itemCount = items.length;
+    const minAngularGap = 0.78;
+    const maxCardsPerRing = Math.max(1, Math.floor((Math.PI * 2) / minAngularGap));
+    const ringSpacingY = 5.8;
+    const orbitRadius = 11.8;
+
     const cardTextureLoader = new THREE.TextureLoader();
 
     items.forEach((item, index) => {
-      // Arrange projects in a line (circular band)
-      const spacing = (Math.PI * 2) / Math.max(1, itemCount);
-      const angle = spacing * index;
-      const circleRadius = 9;
+      const ringIndex = Math.floor(index / Math.max(1, maxCardsPerRing));
 
-      const x = Math.cos(angle) * circleRadius;
-      const z = Math.sin(angle) * circleRadius;
-      const y = 0;
+      const ringStart = ringIndex * maxCardsPerRing;
+      const cardsInThisRing = Math.min(
+        maxCardsPerRing,
+        Math.max(1, itemCount - ringStart)
+      );
+
+      const slotIndex = index - ringStart;
+      const ringAngleSpacing = (Math.PI * 2) / Math.max(1, cardsInThisRing);
+      const angle = ringAngleSpacing * slotIndex;
+
+      const x = Math.cos(angle) * orbitRadius;
+      const z = Math.sin(angle) * orbitRadius;
+      const y = -ringIndex * ringSpacingY;
 
       // Create card
       const geometry = new THREE.PlaneGeometry(6.4, 7.8);
@@ -254,11 +275,11 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       sphereGroup.add(card);
     });
 
-    // Mouse tracking and card hover detection
+    // Pointer/touch tracking and card hover detection
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    const updateHoveredCard = (event: MouseEvent) => {
+    const updateHoveredCard = (event: PointerEvent | MouseEvent) => {
       const bounds = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
       mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
@@ -275,16 +296,23 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       }
     };
 
-    const onMouseDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       isDraggingRef.current = true;
       mouseRef.current = { x: event.clientX, y: event.clientY };
       setHoveredItem(null);
+
+      event.preventDefault();
+      if (!renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.setPointerCapture(event.pointerId);
+      }
     };
 
-    const onMouseMove = (event: MouseEvent) => {
+    const onPointerMove = (event: PointerEvent) => {
       updateHoveredCard(event);
 
       if (!isDraggingRef.current) return;
+
+      event.preventDefault();
 
       const deltaX = event.clientX - mouseRef.current.x;
       const deltaY = event.clientY - mouseRef.current.y;
@@ -295,19 +323,24 @@ const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
       mouseRef.current = { x: event.clientX, y: event.clientY };
     };
 
-    const onMouseUp = () => {
+    const onPointerUp = (event: PointerEvent) => {
       isDraggingRef.current = false;
+
+      if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.releasePointerCapture(event.pointerId);
+      }
     };
 
-    const onMouseLeave = () => {
+    const onPointerLeave = () => {
       isDraggingRef.current = false;
       setHoveredItem(null);
     };
 
-    renderer.domElement.addEventListener('mousedown', onMouseDown);
-    renderer.domElement.addEventListener('mousemove', onMouseMove);
-    renderer.domElement.addEventListener('mouseup', onMouseUp);
-    renderer.domElement.addEventListener('mouseleave', onMouseLeave);
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
+    renderer.domElement.addEventListener('pointermove', onPointerMove);
+    renderer.domElement.addEventListener('pointerup', onPointerUp);
+    renderer.domElement.addEventListener('pointercancel', onPointerUp);
+    renderer.domElement.addEventListener('pointerleave', onPointerLeave);
 
     // Raycaster for click detection
     const onCardClick = (event: MouseEvent) => {
@@ -378,10 +411,11 @@ animate();
     return () => {
   window.removeEventListener('resize', onWindowResize);
 
-  renderer.domElement.removeEventListener('mousedown', onMouseDown);
-  renderer.domElement.removeEventListener('mousemove', onMouseMove);
-  renderer.domElement.removeEventListener('mouseup', onMouseUp);
-  renderer.domElement.removeEventListener('mouseleave', onMouseLeave);
+  renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+  renderer.domElement.removeEventListener('pointermove', onPointerMove);
+  renderer.domElement.removeEventListener('pointerup', onPointerUp);
+  renderer.domElement.removeEventListener('pointercancel', onPointerUp);
+  renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
   renderer.domElement.removeEventListener('click', onCardClick);
 
   cancelAnimationFrame(animationFrameId);
@@ -414,7 +448,7 @@ animate();
     <div className="relative w-full h-screen bg-[#0a0a0a]">
       {isMobile ? (
         /* Simple mobile gallery */
-        <div className="w-full h-full overflow-y-auto px-4 py-6">
+        <div className="w-full h-full overflow-y-auto px-4 pb-6 pt-36">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {items.map((item, index) => (
               <button
@@ -473,12 +507,12 @@ animate();
               </button>
 
               {/* Main Content */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 md:items-center">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 md:items-center md:pt-12">
                 {/* Left Column - Content */}
                 <div className="text-white flex flex-col justify-center space-y-6 md:pr-8">
                   {/* Title */}
                   <div>
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{selectedItem.partner}</h2>
+                    <h2 className="pr-12 text-3xl font-bold tracking-tight md:pr-0 md:text-5xl">{selectedItem.partner}</h2>
                   </div>
 
                   {/* Description */}

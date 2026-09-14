@@ -1,43 +1,131 @@
 [
   {
-    "img": "https://images.unsplash.com/photo-1578932750294-f5075e85f44a?q=80&w=1964&auto=format&fit=crop",
+    "img": "/Projects/UIUX Designing/Growva Cover.webp",
     "span": "md:col-span-4",
     "aspect": "aspect-[3/4]",
-    "partner": "Champion",
+    "partner": "Growva - Mobile App Design",
     "category": "UI / UX Designing",
-    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing",
-    "url": "https://www.behance.net/placeholder-champion"
+    "services": "Android, IOS, Home Gardening",
+    "description": "A mobile application that helps home gardeners identify plant diseases, manage plant care, and connect with a gardening community.",
+    "url": "https://www.behance.net/gallery/221672697/Growva-Mobile-App-Design"
   },
   {
-    "img": "https://images.unsplash.com/photo-1621570074981-ee6a0145c8b5?q=80&w=2070&auto=format&fit=crop",
-    "span": "md:col-span-8",
-    "aspect": "aspect-[21/9]",
-    "partner": "Benetton",
-    "category": "UI / UX Designing",
-    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Tech Architecture",
-    "description": "Redesigned Benetton's storefront with a mobile-first UX, integrated headless commerce APIs, and improved SEO and performance across global markets.",
-    "url": "https://www.dribbble.com/placeholder-benetton"
-  },
-  {
-    "img": "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?q=80&w=1974&auto=format&fit=crop",
+    "img": "/Projects/UIUX Designing/BandaraCurry Cover.webp",
     "span": "md:col-span-4",
-    "aspect": "aspect-square",
-    "partner": "Sotf",
+    "aspect": "aspect-[3/4]",
+    "partner": "Sri Lankan Restaurant Website Design",
+    "category": "UI / UX Designing",
+    "services": "Website, Responsive Design, Sri Lankan Restaurant, Culture",
+    "description": "A customized restaurant website designed for a Sri Lankan restaurant based in Japan, blending authentic Sri Lankan heritage with a contemporary digital experience to attract both local Japanese customers and international visitors.",
+    "url": "https://www.behance.net/gallery/221671539/Sri-Lankan-Restaurant-Website-Design"
+  },
+
+
+
+  {
+    "img": "/Projects/Logo Designing/Procure Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Procure 360 Logo",
     "category": "Logo Designing",
-    "services": "Design UX / UI",
-    "description": "User-centered UI overhaul focusing on accessibility and simplified flows, resulting in higher engagement and faster onboarding.",
-    "url": "https://drive.google.com/file/d/placeholder-sotf"
+    "services": "Logo, Branding, Apparel, Fashion",
+    "description": "Designed a modern apparel brand identity that reflects quality craftsmanship, strengthens brand recognition, and ensures consistent application across digital and print media.",
+    "url": "https://www.behance.net/gallery/229988409/Logo-Design-Procure"
   },
   {
-    "img": "https://images.unsplash.com/photo-1480455624313-e23b44b2a390?q=80&w=2070&auto=format&fit=crop",
-    "span": "md:col-span-4",
-    "aspect": "aspect-[4/5]",
-    "partner": "Mason's",
-    "category": "UI / UX Designing",
-    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Tech Architecture",
-    "description": "Built a custom commerce platform with inventory sync, tailored product configurators and an extensible tech architecture for rapid feature rollout.",
-    "url": "https://www.behance.net/placeholder-masons"
+    "img": "/Projects/Logo Designing/BaByBoB Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "BaByBoB Designs Agency Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Design Agency",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": "https://www.behance.net/gallery/253926805/BaByBoB-Designs-Logo-Design"
   },
+  {
+    "img": "/Projects/Logo Designing/DUO Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "DUO Solutions Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Software Development Agency",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": "https://www.behance.net/gallery/254026967/DUO-Solutions-Logo-Design"
+  },
+  {
+    "img": "/Projects/Logo Designing/BigNutz Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "BigNutz Cashew Nuts Brand Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Packageing, Product Designs",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": "https://www.behance.net/gallery/253930909/BigNutz-CashewNuts-Brand-Logo-Design"
+  },
+  {
+    "img": "/Projects/Logo Designing/BakeFairy Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Bake Fairy - Baking Products Brand Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Packageing, Bake Products",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": "https://www.behance.net/gallery/253854215/Bake-Fairy-Baking-Products-Brand-Logo-Design"
+  },
+  {
+    "img": "/Projects/Logo Designing/Momentic Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Momentic Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Photography",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": "https://www.behance.net/gallery/254060303/Momentic-Logo-Design"
+  },
+  {
+    "img": "/Projects/Logo Designing/BeeU Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "BeeU Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": ""
+  },
+  {
+    "img": "/Projects/Logo Designing/Ceylon Treacle Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Ceylon Treacle Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Product Designing",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": ""
+  },
+  {
+    "img": "/Projects/Logo Designing/Irthu Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "Irthu Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Art, Social Media",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": ""
+  },
+  {
+    "img": "/Projects/Logo Designing/PMIE Cover.webp",
+    "span": "md:col-span-6",
+    "aspect": "aspect-[4/3]",
+    "partner": "PMIE Logo",
+    "category": "Logo Designing",
+    "services": "Logo, Branding, Club, Community",
+    "description": "Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.",
+    "url": ""
+  },
+  
+  
+
+
   {
     "img": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=2076&auto=format&fit=crop",
     "span": "md:col-span-4",
@@ -48,26 +136,9 @@
     "description": "End-to-end eCommerce delivery including analytics-driven marketing funnels, A/B testing, and performance tuning for international launches.",
     "url": "https://www.dribbble.com/placeholder-roberto"
   },
-  {
-    "img": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop",
-    "span": "md:col-span-4",
-    "aspect": "aspect-[9/16]",
-    "partner": "Aura",
-    "category": "Product Designing",
-    "services": "Design UX / UI, Custom App, Data Analysis",
-    "description": "Designed and shipped a lightweight custom app that visualizes user data and recommendations with a focus on clarity and low-latency interactions.",
-    "url": "https://drive.google.com/file/d/placeholder-aura"
-  },
-  {
-    "img": "https://images.unsplash.com/photo-1584328591636-b87332152914?q=80&w=2070&auto=format&fit=crop",
-    "span": "md:col-span-8",
-    "aspect": "aspect-[16/9]",
-    "partner": "8pm",
-    "category": "UI / UX Designing",
-    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, Performance Marketing, SEO, Data Analysis, Tech Architecture",
-    "description": "Launched a high-throughput storefront with advanced personalization, reducing page load times and increasing conversion across desktop and mobile.",
-    "url": "https://www.behance.net/placeholder-8pm"
-  },
+
+
+
   {
     "img": "https://images.unsplash.com/photo-1585122684803-a15d2a71f016?q=80&w=2069&auto=format&fit=crop",
     "span": "md:col-span-6",
@@ -78,14 +149,17 @@
     "description": "Modernized platform with modular integrations, improved search relevance and a responsive design system for consistent branding.",
     "url": "https://drive.google.com/file/d/placeholder-kunci"
   },
+
+
+  
   {
-    "img": "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1974&auto=format&fit=crop",
-    "span": "md:col-span-6",
-    "aspect": "aspect-[4/3]",
-    "partner": "Pollini",
-    "category": "Logo Designing",
-    "services": "eCommerce Development, Design UX / UI, System Integration, Custom App, SEO, Data Analysis, Tech Architecture",
-    "description": "Delivered a polished online catalog with tailored SEO, analytics instrumentation and a scalable backend to handle peak traffic.",
-    "url": "https://www.behance.net/placeholder-pollini"
+    "img": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop",
+    "span": "md:col-span-4",
+    "aspect": "aspect-[9/16]",
+    "partner": "Aura",
+    "category": "Product Designing",
+    "services": "Design UX / UI, Custom App, Data Analysis",
+    "description": "Designed and shipped a lightweight custom app that visualizes user data and recommendations with a focus on clarity and low-latency interactions.",
+    "url": "https://drive.google.com/file/d/placeholder-aura"
   }
 ]

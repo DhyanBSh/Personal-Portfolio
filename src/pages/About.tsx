@@ -66,7 +66,7 @@ export const About = () => {
                 duration={0.02}
               />
               <TextReveal
-                text="I believe great design should do more than solve problems, it should create lasting impressions. By combining technical expertise with a refined design perspective, I help brands build meaningful experiences that stand out in an increasingly competitive world."
+                text="I believe great design should do more than solve problems, it should create lasting impressions. By combining technical expertise with a refined design perspective, I help brands to build meaningful experiences that stand out."
                 as="p"
                 threshold={0.15}
                 duration={0.02}
@@ -91,10 +91,6 @@ export const About = () => {
               .animate-marquee {
                 animation: marquee-scroll 25s linear infinite;
               }
-              .mask-center-fade {
-                -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,1) 65%, rgba(0,0,0,1) 100%);
-                mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,1) 65%, rgba(0,0,0,1) 100%);
-              }
 
               /* Mobile: widen the transparent center to create a larger dark shadow/gap */
               @media (max-width: 768px) {
@@ -105,7 +101,7 @@ export const About = () => {
               }
             `}</style>
 
-            <div className="w-full mask-center-fade overflow-hidden flex">
+            <div className="w-full overflow-hidden flex">
               <div className="flex w-max animate-marquee items-center gap-12 sm:gap-16 pr-12 sm:pr-16">
                 {[...Array(2)].map((_, trackIndex) => (
                   <div key={trackIndex} className="flex items-center gap-12 sm:gap-16 flex-nowrap">
@@ -146,22 +142,6 @@ export const About = () => {
               </div>
             </div>
 
-            {/* Fixed Center Button */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              <a
-                href="/cv.pdf"
-                download
-                aria-label="Download CV"
-                className={`flex py-4 group px-6 text-[10px] uppercase tracking-widest font-bold transition-all items-center gap-2 border ${
-                  isDark
-                    ? 'border-white text-white hover:bg-white hover:text-black'
-                    : 'border-[#111] text-[#111] hover:bg-[#111] hover:text-white'
-                }`}
-              >
-                Download CV
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </div>
           </motion.div>
         </ParallaxLayer>
 
@@ -183,7 +163,7 @@ export const About = () => {
             }`}>EDUCATION</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
               <div>
-                <motion.div variants={itemVariants} className="text-lg font-semibold">B. Sc(Hons) Software Engineering</motion.div>
+                <motion.div variants={itemVariants} className="text-lg font-semibold">B. Sc(Hons) in Software Engineering</motion.div>
                 <motion.div variants={itemVariants} className={`text-sm ${isDark ? 'text-white/70' : 'text-white/70'}`}>General Sir John Kotelawala Defence University, Rathmalana, Sri Lanka</motion.div>
               </div>
               <div>

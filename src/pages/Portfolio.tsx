@@ -41,8 +41,8 @@ export const Portfolio = () => {
       <SphericalGallery items={filteredItems} />
 
       {/* Category Filter - Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-[#0a0a0a] to-transparent p-8">
-        <div className="flex flex-wrap gap-8 justify-center">
+      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/95 to-transparent px-4 pb-6 pt-16 md:p-8">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-6 md:gap-8">
           {categories.map(category => (
             <button
               key={category}

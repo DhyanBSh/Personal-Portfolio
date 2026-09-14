@@ -252,5 +252,11 @@ section .cinematic-reveal {
   transform: scale(1.4) !important;
 }
 
+@media (max-width: 767px) {
+  .mobile-project-open .mobile-navbar {
+    display: none;
+  }
+}
+
 
 

@@ -8,25 +8,25 @@ const testimonials = [
     message:
       'We truly appreciate the dedication, creativity, and effort you brought into this. We came away not just with a polished brand identity, but with a clear brand system, reusable guidelines, and a strategic point of view that will guide our work going forward, along with a partner who cared about outcomes as much as we did.',
     name: 'Sarindu Sihasara',
-    designation: 'Founder, Ceyros',
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop',
+    designation: 'Executive - APS Logistics International',
+  },
+  {
+    message:
+      'I’ve known him since our university days, where we worked together on Rotaract projects and concerts. I was always impressed by his creativity and attention to detail in his designs. I’ve also worked with him on several designs for my own projects, and the results were always great. He is easy to work with, reliable, and always open to feedback. Whenever I requested changes, he was happy to make them and made sure I was satisfied with the final result. I would definitely recommend him to anyone looking for a talented and dependable designer.',
+    name: 'Shenal Perera',
+    designation: 'Shenz Studio',
   },
   {
     message:
       'Amazing work and great communication throughout the project. He was very patient with all my changes and made sure every detail was perfect. The final designs were creative, professional, and delivered right on time.',
     name: 'Mayuri Chandraratne',
-    designation: 'Product Lead, Irusri Group AB',
-    image:
-      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop',
+    designation: '',
   },
   {
     message:
       'From start to finish, the process was seamless. He listened carefully to all my ideas, gave valuable suggestions, and created something even better than what I had in mind. His graphic designing and video editing skills are exceptional, delivering high-quality work on time. Professional, punctual, and extremely patient throughout every revision even though I wanted the designs and videos urgently. I highly recommend his work.',
     name: 'Tusari Gallage',
     designation: 'Secretary, RACKDU',
-    image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',
   },
 ];
 
@@ -221,14 +221,14 @@ export const Testimonials = () => {
         onMouseUp={endMouseDrag}
         onMouseLeave={endMouseDrag}
         onTouchStart={handleTouchStart}
-        className="flex cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scrollbar-width:none] [touch-action:pan-x] select-none [&::-webkit-scrollbar]:hidden active:cursor-grabbing"
+        className="flex cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scrollbar-width:none] [touch-action:pan-x_pan-y] select-none [&::-webkit-scrollbar]:hidden active:cursor-grabbing"
       >
         <div ref={firstSetRef} className="flex gap-6">
           {testimonials.map((testimonial, index) => (
             <motion.article
               key={`${testimonial.name}-a-${index}`}
               variants={testimonialVariants}
-              className={`flex min-h-[440px] w-[88vw] shrink-0 snap-start flex-col justify-between rounded-[4px] border p-7 md:min-h-[520px] md:w-[58vw] md:p-10 lg:w-[58vw] ${
+              className={`flex min-h-[440px] w-[88vw] shrink-0 snap-start flex-col justify-between rounded-[4px] border p-7 md:min-h-[520px] md:w-[58vw] md:p-10 lg:w-[45vw] ${
                 isDark ? 'border-white/15 bg-white/[0.04]' : 'border-black/15 bg-black/[0.03]'
               }`}
             >
@@ -237,12 +237,6 @@ export const Testimonials = () => {
               </p>
 
               <div className="mt-12 flex items-center gap-4 border-t border-current/15 pt-6">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  loading="lazy"
-                  className="h-14 w-14 rounded-full object-cover grayscale transition duration-500 hover:grayscale-0"
-                />
                 <div>
                   <h3 className="text-sm font-semibold">{testimonial.name}</h3>
                   <p className="mt-1 text-xs uppercase tracking-[0.14em] opacity-55">
@@ -259,7 +253,7 @@ export const Testimonials = () => {
             <motion.article
               key={`${testimonial.name}-b-${index}`}
               variants={testimonialVariants}
-              className={`flex min-h-[440px] w-[88vw] shrink-0 snap-start flex-col justify-between rounded-[4px] border p-7 md:min-h-[520px] md:w-[58vw] md:p-10 lg:w-[58vw] ${
+              className={`flex min-h-[440px] w-[88vw] shrink-0 snap-start flex-col justify-between rounded-[4px] border p-7 md:min-h-[520px] md:w-[58vw] md:p-10 lg:w-[45vw] ${
                 isDark ? 'border-white/15 bg-white/[0.04]' : 'border-black/15 bg-black/[0.03]'
               }`}
             >
@@ -268,13 +262,6 @@ export const Testimonials = () => {
               </p>
 
               <div className="mt-12 flex items-center gap-4 border-t border-current/15 pt-6">
-                <img
-                  src={testimonial.image}
-                  alt=""
-                  loading="lazy"
-                  aria-hidden="true"
-                  className="h-14 w-14 rounded-full object-cover grayscale transition duration-500 hover:grayscale-0"
-                />
                 <div>
                   <h3 className="text-sm font-semibold">{testimonial.name}</h3>
                   <p className="mt-1 text-xs uppercase tracking-[0.14em] opacity-55">
@@ -288,6 +275,9 @@ export const Testimonials = () => {
       </motion.div>
 
       <div className="mt-8 flex items-center justify-between border-t border-current/15 pt-5">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-50">
+          
+        </span>
 
         <div className="flex gap-2">
           <button
