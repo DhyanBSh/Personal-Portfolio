@@ -5,10 +5,17 @@ import { useBackgroundTransition } from '../hooks/useBackgroundTransition';
 const featuredProjects = [
   {
     title: 'Growva Gardening App - Case Study',
-    category: 'M<obile App Design / UX Research',
+    category: 'Mobile App Design / UX Research',
     description: 'Designed a mobile app enabling users to identify plant diseases and receive care recommendations, focused on accessible, intuitive interactions for a non-technical audience.',
     image: '/Projects/UIUX Designing/Growva Cover.webp',
     pdfUrl: 'https://www.behance.net/gallery/221672697/Growva-Mobile-App-Design-Case-Study',
+  },
+  {
+    title: 'Momentic Logo',
+    category: 'Logo Design',
+    description: 'Developed a scalable visual identity that strengthens brand recognition and maintains consistency across all marketing touchpoints.',
+    image: '/Projects/Logo Designing/Momentic Cover.webp',
+    pdfUrl: 'https://www.behance.net/gallery/254060303/Momentic-Logo-Design',
   },
   {
     title: 'Sri Lankan Restaurant Website - Case Study',
@@ -70,7 +77,12 @@ export const FeaturedProjects = () => {
             variants={projectVariants}
             className={index % 3 === 1 ? 'md:translate-y-16' : ''}
           >
-            <a href="#contact" className="group block">
+            <a
+              href={project.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block"
+            >
               <div className="relative aspect-[1.42] overflow-hidden rounded-[4px] bg-black/10">
                 <motion.img
                   src={project.image}

@@ -15,11 +15,11 @@ const itemVariants = {
 };
 
 const numberedServices = [
-  { title: "UI / UX Designing", img: "/Services/UI.webp" },
-  { title: "Logo Designing", img: "/Services/Logo.webp" },
-  { title: "Banner / Flyer Designing", img: "/Services/Flyer.webp" },
+  { title: "UI / UX Design", img: "/Services/UI.webp" },
+  { title: "Logo Design", img: "/Services/Logo.webp" },
+  { title: "Banner / Flyer Design", img: "/Services/Flyer.webp" },
   { title: "Video Editing", img: "/Services/Video.webp" },
-  { title: "Product Designing", img: "/Services/Product.webp" },
+  { title: "Product Design", img: "/Services/Product.webp" },
 ];
 
 export const Services = () => {
@@ -87,11 +87,11 @@ export const Services = () => {
           </motion.div>
 
           <motion.div variants={itemVariants} className="lg:col-span-5 lg:pl-16 pt-8 lg:pt-0">
-            <ul className="space-y-4 md:space-y-5" onMouseLeave={() => setActiveIndex(0)}>
+            <ul className="space-y-4 md:space-y-5">
               {numberedServices.map((service, idx) => (
                 <li
                   key={idx}
-                  onMouseEnter={() => setActiveIndex(idx)}
+                  onClick={() => setActiveIndex(idx)}
                   className={`flex items-start text-lg sm:text-xl md:text-2xl font-medium tracking-tight hover:text-[#111] transition-colors cursor-pointer ${
                     activeIndex === idx ? 'text-[#111]' : 'text-black/30'
                   }`}

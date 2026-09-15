@@ -62,12 +62,11 @@ export const Footer = () => (
     <motion.div variants={itemVariants} className="p-10 md:p-16 lg:p-24">
       <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold text-black/40 mb-10 border-b border-black/10 pb-6">Services</h4>
       <ul className="space-y-6 text-xs font-semibold uppercase tracking-wider text-[#111]">
-        <li className="hover:opacity-50 transition-opacity cursor-pointer">Web Development</li>
         <li className="hover:opacity-50 transition-opacity cursor-pointer">UI/UX Design</li>
         <li className="hover:opacity-50 transition-opacity cursor-pointer">Logo Design</li>
         <li className="hover:opacity-50 transition-opacity cursor-pointer">Poster Design</li>
-        <li className="hover:opacity-50 transition-opacity cursor-pointer">Visiting Card</li>
-        <li className="hover:opacity-50 transition-opacity cursor-pointer">Graphic Design</li>
+        <li className="hover:opacity-50 transition-opacity cursor-pointer">Video Editing</li>
+        <li className="hover:opacity-50 transition-opacity cursor-pointer">Product Design</li>
       </ul>
     </motion.div>
 

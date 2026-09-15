@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { X, Filter } from 'lucide-react';
+
+import { useBackgroundTransition } from '../hooks/useBackgroundTransition';
 
 interface PortfolioItem {
   img: string;
@@ -18,592 +20,420 @@ interface SphericalGalleryProps {
   items: PortfolioItem[];
 }
 
-// Fallback placeholder images
-const LOCAL_PLACEHOLDERS = [
-  '/HeroBG1.jpg',
-  '/Home BG.png',
-  '/DUO Logo.png',
-];
-
-const getPlaceholderImage = (index: number) => {
-  return LOCAL_PLACEHOLDERS[index % LOCAL_PLACEHOLDERS.length];
+const projectVariants = {
+  hidden: {
+    opacity: 0,
+    y: 48,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
 };
-
-const MOBILE_BREAKPOINT = 768;
 
 const SphericalGallery: React.FC<SphericalGalleryProps> = ({ items }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const sphereGroupRef = useRef<THREE.Group | null>(null);
-  const texturesRef = useRef<Map<string, THREE.Texture>>(new Map());
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<PortfolioItem | null>(null);
-  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
-  const [texturesVersion, setTexturesVersion] = useState(0);
-  const rotationRef = useRef({ x: 0, y: 0 });
-  const targetRotationRef = useRef({ x: 0, y: 0 });
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const isDraggingRef = useRef(false);
+  const { backgroundColor } = useBackgroundTransition();
+  const isDark = backgroundColor === 'black';
 
-  const [isMobile, setIsMobile] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
-  );
+  const [selectedItem, setSelectedItem] =
+    useState<PortfolioItem | null>(null);
 
-  // Track viewport size to switch between sphere (web) and simple gallery (mobile)
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    onResize();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>('All');
 
-  useEffect(() => {
-    document.body.classList.toggle('mobile-project-open', isMobile && selectedItem !== null);
+  const [isCategoryPanelOpen, setIsCategoryPanelOpen] =
+    useState(false);
 
-    return () => document.body.classList.remove('mobile-project-open');
-  }, [isMobile, selectedItem]);
-
-  // Load textures with fallback
-  useEffect(() => {
-    if (isMobile) return;
-
-    const textureLoader = new THREE.TextureLoader();
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-
-    const loadedTextures = new Map<string, THREE.Texture>();
-
-    // Create placeholder texture with gradient
-    const createPlaceholderTexture = (index: number) => {
-      if (!ctx) return null;
-      
-      const colors = [
-        { bg: '#1a1a2e', accent: '#16213e' },
-        { bg: '#0f3460', accent: '#16213e' },
-        { bg: '#2d1b00', accent: '#3d2817' },
-        { bg: '#1a1a1a', accent: '#2d2d2d' },
-        { bg: '#0d0d0d', accent: '#1a1a1a' },
-        { bg: '#1b1b2f', accent: '#16213e' },
-      ];
-      
-      const color = colors[index % colors.length];
-      
-      // Create gradient background
-      const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-      gradient.addColorStop(0, color.bg);
-      gradient.addColorStop(1, color.accent);
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 512, 512);
-      
-      // Add text
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 48px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(items[index]?.partner || 'Project', 256, 256);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      return texture;
-    };
-
-    const loadTexture = (url: string, index: number) => {
-      return new Promise<THREE.Texture>((resolve) => {
-        // Try loading from external URL first
-        textureLoader.load(
-          url,
-          (texture) => {
-            texture.colorSpace = THREE.SRGBColorSpace;
-            loadedTextures.set(url, texture);
-            resolve(texture);
-          },
-          undefined,
-          () => {
-            // If external load fails, try local placeholder
-            textureLoader.load(
-              getPlaceholderImage(index),
-              (texture) => {
-                texture.colorSpace = THREE.SRGBColorSpace;
-                loadedTextures.set(url, texture);
-                resolve(texture);
-              },
-              undefined,
-              () => {
-                // Last resort: create procedural texture
-                const placeholderTexture = createPlaceholderTexture(index);
-                if (placeholderTexture) {
-                  loadedTextures.set(url, placeholderTexture);
-                  resolve(placeholderTexture);
-                } else {
-                  resolve(new THREE.Texture());
-                }
-              }
-            );
-          }
-        );
-      });
-    };
-
-    const loadAllTextures = async () => {
-      try {
-        await Promise.all(items.map((item, idx) => loadTexture(item.img, idx)));
-        texturesRef.current = loadedTextures;
-        setTexturesVersion((version) => version + 1);
-      } catch (err) {
-        console.error('Error loading textures:', err);
-      }
-    };
-
-    loadAllTextures();
-  }, [items, isMobile]);
-
-  // Initialize Three.js scene
-  useEffect(() => {
-    if (isMobile || !containerRef.current || items.length === 0) return;
-
-    // Scene setup
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a0a);
-    sceneRef.current = scene;
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
-      0.1,
-      10000
+  // Extract unique categories
+  const categories = useMemo(() => {
+    const uniqueCategories = Array.from(
+      new Set(items.map((item) => item.category))
     );
-    camera.position.z = 8.5;
-    cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.domElement.style.touchAction = 'none';
-    containerRef.current.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+    return ['All', ...uniqueCategories];
+  }, [items]);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-    scene.add(ambientLight);
-
-    const pointLight = new THREE.PointLight(0xffffff, 0.5);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
-
-    // Create sphere group
-    const sphereGroup = new THREE.Group();
-    scene.add(sphereGroup);
-    sphereGroupRef.current = sphereGroup;
-
-    // Keep each orbit layer physically separate.
-    // Fill the first inner-wall orbit to a safe card capacity, then create a
-    // new lower orbit when the current orbit reaches its card limit.
-    const itemCount = items.length;
-    const minAngularGap = 0.78;
-    const maxCardsPerRing = Math.max(1, Math.floor((Math.PI * 2) / minAngularGap));
-    const ringSpacingY = 5.8;
-    const orbitRadius = 11.8;
-
-    const cardTextureLoader = new THREE.TextureLoader();
-
-    items.forEach((item, index) => {
-      const ringIndex = Math.floor(index / Math.max(1, maxCardsPerRing));
-
-      const ringStart = ringIndex * maxCardsPerRing;
-      const cardsInThisRing = Math.min(
-        maxCardsPerRing,
-        Math.max(1, itemCount - ringStart)
-      );
-
-      const slotIndex = index - ringStart;
-      const ringAngleSpacing = (Math.PI * 2) / Math.max(1, cardsInThisRing);
-      const angle = ringAngleSpacing * slotIndex;
-
-      const x = Math.cos(angle) * orbitRadius;
-      const z = Math.sin(angle) * orbitRadius;
-      const y = -ringIndex * ringSpacingY;
-
-      // Create card
-      const geometry = new THREE.PlaneGeometry(6.4, 7.8);
-      
-      // Use the project image for every card face.
-      let material: THREE.MeshBasicMaterial;
-      const texture = texturesRef.current.get(item.img);
-
-      if (texture && texture.image) {
-        material = new THREE.MeshBasicMaterial({
-          map: texture,
-          toneMapped: false,
-        });
-      } else {
-        material = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          toneMapped: false,
-        });
-
-        cardTextureLoader.load(
-          item.img,
-          (loadedTexture) => {
-            loadedTexture.colorSpace = THREE.SRGBColorSpace;
-            material.map = loadedTexture;
-            material.needsUpdate = true;
-          },
-          undefined,
-          () => {
-            cardTextureLoader.load(getPlaceholderImage(index), (fallbackTexture) => {
-              fallbackTexture.colorSpace = THREE.SRGBColorSpace;
-              material.map = fallbackTexture;
-              material.needsUpdate = true;
-            });
-          }
-        );
-      }
-
-      const card = new THREE.Mesh(geometry, material);
-      card.position.set(x, y, z);
-
-      // Look at center for circular arrangement
-      card.lookAt(0, 0, 0);
-      card.userData = { item, index };
-
-      sphereGroup.add(card);
-    });
-
-    // Pointer/touch tracking and card hover detection
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    const updateHoveredCard = (event: PointerEvent | MouseEvent) => {
-      const bounds = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-
-      const hoveredCard = raycaster.intersectObjects(sphereGroup.children)[0]?.object;
-      const item = hoveredCard?.userData?.item as PortfolioItem | undefined;
-
-      if (item) {
-        setHoveredItem(item);
-        setHoverPosition({ x: event.clientX, y: event.clientY });
-      } else {
-        setHoveredItem(null);
-      }
-    };
-
-    const onPointerDown = (event: PointerEvent) => {
-      isDraggingRef.current = true;
-      mouseRef.current = { x: event.clientX, y: event.clientY };
-      setHoveredItem(null);
-
-      event.preventDefault();
-      if (!renderer.domElement.hasPointerCapture(event.pointerId)) {
-        renderer.domElement.setPointerCapture(event.pointerId);
-      }
-    };
-
-    const onPointerMove = (event: PointerEvent) => {
-      updateHoveredCard(event);
-
-      if (!isDraggingRef.current) return;
-
-      event.preventDefault();
-
-      const deltaX = event.clientX - mouseRef.current.x;
-      const deltaY = event.clientY - mouseRef.current.y;
-
-      targetRotationRef.current.y += deltaX * 0.005;
-      targetRotationRef.current.x += deltaY * 0.005;
-
-      mouseRef.current = { x: event.clientX, y: event.clientY };
-    };
-
-    const onPointerUp = (event: PointerEvent) => {
-      isDraggingRef.current = false;
-
-      if (renderer.domElement.hasPointerCapture(event.pointerId)) {
-        renderer.domElement.releasePointerCapture(event.pointerId);
-      }
-    };
-
-    const onPointerLeave = () => {
-      isDraggingRef.current = false;
-      setHoveredItem(null);
-    };
-
-    renderer.domElement.addEventListener('pointerdown', onPointerDown);
-    renderer.domElement.addEventListener('pointermove', onPointerMove);
-    renderer.domElement.addEventListener('pointerup', onPointerUp);
-    renderer.domElement.addEventListener('pointercancel', onPointerUp);
-    renderer.domElement.addEventListener('pointerleave', onPointerLeave);
-
-    // Raycaster for click detection
-    const onCardClick = (event: MouseEvent) => {
-      if (isDraggingRef.current) return;
-
-      const bounds = renderer.domElement.getBoundingClientRect();
-      mouse.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
-      mouse.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-
-      const intersects = raycaster.intersectObjects(sphereGroup.children);
-
-      if (intersects.length > 0) {
-        const clickedCard = intersects[0].object as THREE.Mesh<
-  THREE.BufferGeometry,
-  THREE.Material | THREE.Material[]
->;
-        if (clickedCard.userData?.item) {
-          setSelectedItem(clickedCard.userData.item);
-        }
-      }
-    };
-
-    renderer.domElement.addEventListener('click', onCardClick);
-
-    // Animation loop
-    let animationFrameId: number;
-
-const animate = () => {
-  animationFrameId = requestAnimationFrame(animate);
-
-  if (!isDraggingRef.current) {
-    targetRotationRef.current.y += 0.00045;
-  }
-
-  rotationRef.current.x +=
-    (targetRotationRef.current.x - rotationRef.current.x) * 0.1;
-
-  rotationRef.current.y +=
-    (targetRotationRef.current.y - rotationRef.current.y) * 0.1;
-
-  if (sphereGroupRef.current) {
-    sphereGroupRef.current.rotation.x = rotationRef.current.x;
-    sphereGroupRef.current.rotation.y = rotationRef.current.y;
-  }
-
-  renderer.render(scene, camera);
-};
-
-animate();
-
-    // Handle window resize
-    const onWindowResize = () => {
-      if (!containerRef.current) return;
-
-      const width = containerRef.current.clientWidth;
-      const height = containerRef.current.clientHeight;
-
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-    };
-
-    window.addEventListener('resize', onWindowResize);
-
-    // Cleanup
-    return () => {
-  window.removeEventListener('resize', onWindowResize);
-
-  renderer.domElement.removeEventListener('pointerdown', onPointerDown);
-  renderer.domElement.removeEventListener('pointermove', onPointerMove);
-  renderer.domElement.removeEventListener('pointerup', onPointerUp);
-  renderer.domElement.removeEventListener('pointercancel', onPointerUp);
-  renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
-  renderer.domElement.removeEventListener('click', onCardClick);
-
-  cancelAnimationFrame(animationFrameId);
-
-  sphereGroup.traverse((obj) => {
-    if (obj instanceof THREE.Mesh) {
-      obj.geometry.dispose();
-
-      if (Array.isArray(obj.material)) {
-        obj.material.forEach((m) => m.dispose());
-      } else {
-        obj.material.dispose();
-      }
+  // Filter projects
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === 'All') {
+      return items;
     }
-  });
 
-  texturesRef.current.forEach((texture) => {
-    texture.dispose();
-  });
+    return items.filter(
+      (item) => item.category === selectedCategory
+    );
+  }, [items, selectedCategory]);
 
-  texturesRef.current.clear();
+  // Handle category selection
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setIsCategoryPanelOpen(false);
+  };
 
-  containerRef.current?.removeChild(renderer.domElement);
+  // Open modal
+  const openModal = (project: PortfolioItem) => {
+    setSelectedItem(project);
+  };
 
-  renderer.dispose();
-};
-  }, [items, isMobile, texturesVersion]);
+  // Close modal
+  const closeModal = () => {
+    setSelectedItem(null);
+  };
+
+  // Prevent background scrolling while modal is open
+  useEffect(() => {
+    if (!selectedItem) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedItem]);
+
+  // Close modal with Escape key
+  useEffect(() => {
+    if (!selectedItem) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedItem]);
 
   return (
-    <div className="relative w-full h-screen bg-[#0a0a0a]">
-      {isMobile ? (
-        /* Simple mobile gallery */
-        <div className="w-full h-full overflow-y-auto px-4 pb-6 pt-36">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {items.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedItem(item)}
-                className="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-900 text-left"
-              >
-                <img
-                  src={item.img}
-                  alt={item.partner}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    img.src = getPlaceholderImage(index);
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <p className="text-xs uppercase tracking-widest text-white/60">{item.category}</p>
-                  <h3 className="text-lg font-semibold">{item.partner}</h3>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div ref={containerRef} className="w-full h-full" />
-      )}
-
-      {/* Detail Modal */}
-      <AnimatePresence>
-        {selectedItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedItem(null)}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-6 pt-24 md:pt-20"
-          >
-            <motion.div
-              ref={modalRef}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-6xl max-h-[calc(100vh-120px)] overflow-y-auto"
-            >
-              {/* Close Button */}
-              <button
-                type="button"
-                aria-label="Close project details"
-                onClick={() => setSelectedItem(null)}
-                className="absolute right-0 top-0 z-10 rounded-lg p-2 text-white mix-blend-difference transition hover:bg-white/10"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Main Content */}
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 md:items-center md:pt-12">
-                {/* Left Column - Content */}
-                <div className="text-white flex flex-col justify-center space-y-6 md:pr-8">
-                  {/* Title */}
-                  <div>
-                    <h2 className="pr-12 text-3xl font-bold tracking-tight md:pr-0 md:text-5xl">{selectedItem.partner}</h2>
-                  </div>
-
-                  {/* Description */}
-                  {selectedItem.description && (
-                    <div className="space-y-2">
-                      <p className="text-sm md:text-base text-gray-300 leading-relaxed font-light">
-                        {selectedItem.description}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Keywords/Services */}
-                  <div className="space-y-3">
-                    <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">Services</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedItem.services.split(',').map((service, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1.5 text-xs font-light border border-white/20 rounded-full text-gray-300 hover:border-white/40 transition magnetic-target"
-                          style={{ transitionDuration: '0.2s' }}
-                        >
-                          {service.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Category Badge */}
-                  <div className="space-y-3">
-                    <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold">Category</p>
-                    <p className="text-sm font-light text-gray-400">{selectedItem.category}</p>
-                  </div>
-
-                  {/* CTA Link */}
-                  {selectedItem.url && (
-  <div className="pt-4">
-    <a
-      href={selectedItem.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-3 text-white text-sm uppercase tracking-widest font-bold hover:opacity-70 transition-opacity magnetic-target"
-      style={{ transitionDuration: '0.2s' }}
+    <section
+      className={`min-h-screen px-6 py-20 transition-colors duration-500 md:px-12 md:py-32 ${
+        isDark
+          ? 'bg-black text-white'
+          : 'bg-[#fcfcfc] text-[#111]'
+      }`}
     >
-      View Project
-      <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
-    </a>
-  </div>
-)}
-                </div>
+      {/* Category Filter - Desktop */}
+      <div className="mb-12 hidden md:block">
+        <div className="flex flex-wrap gap-8">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`text-sm font-medium tracking-wide transition-all duration-300 ${
+                selectedCategory === category
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
 
-                {/* Right Column - Image */}
-                <div className="relative overflow-hidden rounded-lg aspect-video md:aspect-auto md:h-96 bg-gradient-to-br from-gray-800 to-gray-900 group">
-                  <img
-                    src={selectedItem.img}
-                    alt={selectedItem.partner}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    onError={(e) => {
-                      const img = e.target as HTMLImageElement;
-                      const idx = items.findIndex(
-  (item) => item.partner === selectedItem.partner
-);
+      {/* Category Filter - Mobile Toggle Button */}
+      <div className="mt-16 mb-6 md:hidden">
+        <button
+          onClick={() => setIsCategoryPanelOpen(!isCategoryPanelOpen)}
+          className="flex w-full items-center justify-between rounded-lg border border-gray-500 bg-transparent px-5 py-3 text-sm font-medium text-white transition-colors hover:border-gray-400"
+        >
+          <span>Category: {selectedCategory}</span>
+          <Filter className="h-4 w-4" />
+        </button>
 
-img.src = getPlaceholderImage(idx >= 0 ? idx : 0);
-                    }}
-                  />
-                  {/* Spatial dimension overlay effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
-                </div>
+        <AnimatePresence>
+          {isCategoryPanelOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 flex flex-col gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => handleCategorySelect(category)}
+                    className={`rounded-lg border px-5 py-3 text-left text-sm font-medium transition-all ${
+                      selectedCategory === category
+                        ? 'border-white bg-white text-black'
+                        : 'border-gray-500 bg-transparent text-gray-500 hover:border-gray-400 hover:text-gray-400'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
               </div>
             </motion.div>
-          </motion.div>
-        )}
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* --------------------------------------------- */}
+      {/* PROJECTS GRID */}
+      {/* --------------------------------------------- */}
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedCategory}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          className="grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-2 md:gap-y-20"
+        >
+          {filteredItems.map((project, index) => (
+            <motion.article
+              key={`${selectedCategory}-${project.partner}-${index}`}
+              variants={projectVariants}
+              className={
+                index % 3 === 1
+                  ? 'md:translate-y-16'
+                  : ''
+              }
+            >
+              <button
+                type="button"
+                onClick={() => openModal(project)}
+                className="group block w-full text-left"
+                aria-label={`View ${project.partner} project details`}
+              >
+                {/* Project Image */}
+                <div className="relative aspect-[1.42] overflow-hidden rounded-[4px] bg-black/10">
+                  <img
+                    src={project.img}
+                    alt={`${project.partner} project preview`}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition duration-1000 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04]"
+                  />
+
+                  <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/15" />
+                </div>
+
+                {/* Project Information */}
+                <div className="grid grid-cols-[1fr_auto] gap-5 border-b border-current/20 py-5">
+                  <div>
+                    <h3 className="text-2xl font-medium tracking-[-0.04em] md:text-3xl">
+                      {project.partner}
+                    </h3>
+
+                    {project.description && (
+                      <p className="mt-2 max-w-xl text-sm leading-relaxed opacity-60">
+                        {project.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="text-right text-[10px] font-semibold uppercase tracking-[0.15em] opacity-50">
+                    <p className="max-w-[130px] leading-relaxed">
+                      {project.category}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </motion.article>
+          ))}
+        </motion.div>
       </AnimatePresence>
 
-      {/* Instructions overlay */}
-      {!isMobile && hoveredItem && (
-        <div
-          className="pointer-events-none fixed z-20 -translate-x-1/2 -translate-y-full border border-white/30 bg-black/85 px-4 py-3 text-center text-white backdrop-blur-sm"
-          style={{ left: hoverPosition.x, top: hoverPosition.y - 18 }}
-        >
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/55">Project</p>
-          <p className="mt-1 text-lg font-medium tracking-tight">{hoveredItem.partner}</p>
+      {/* --------------------------------------------- */}
+      {/* NO RESULTS */}
+      {/* --------------------------------------------- */}
+
+      {filteredItems.length === 0 && (
+        <div className="py-20 text-center">
+          <p className="text-lg opacity-50">
+            No projects found in this category.
+          </p>
         </div>
       )}
 
-      {!isMobile && (
-        <div className="absolute top-36 sm:top-24 left-1/2 -translate-x-1/2 z-10 text-white/60 text-sm text-center">
-          <p>Drag to rotate • Click to view details</p>
-        </div>
-      )}
-    </div>
+      {/* --------------------------------------------- */}
+      {/* DETAIL MODAL */}
+      {/* --------------------------------------------- */}
+
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {selectedItem && (
+              <motion.div
+                key="project-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[1] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm md:p-6"
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget) {
+                    closeModal();
+                  }
+                }}
+                role="dialog"
+                aria-modal="true"
+                aria-label={`${selectedItem.partner} project details`}
+              >
+                <motion.div
+                  key="project-modal-content"
+                  initial={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 10,
+                  }}
+                  transition={{
+                    duration: 0.25,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  onMouseDown={(event) =>
+                    event.stopPropagation()
+                  }
+                  className="relative flex max-h-[calc(100vh-1rem)] mt-16 w-full max-w-6xl flex-col overflow-hidden rounded-lg bg-black/70 backdrop-blur-sm shadow-2xl md:max-h-[calc(100vh-3rem)]"
+                >
+                  {/* Close Button */}
+                  <button
+                    type="button"
+                    aria-label="Close project details"
+                    onClick={closeModal}
+                    className="absolute right-2 top-2 z-20 rounded-full bg-white/10 p-2 text-white shadow-sm transition hover:bg-white/30 md:right-4 md:top-4"
+                  >
+                    <X
+                      size={20}
+                      strokeWidth={2}
+                      className="md:h-6 md:w-6"
+                    />
+                  </button>
+
+                  {/* Scrollable Content */}
+                  <div className="overflow-y-auto">
+                    <div className="grid grid-cols-1 gap-6 p-4 pb-6 md:grid-cols-2 md:gap-12 md:p-12">
+                      {/* -------------------------------- */}
+                      {/* LEFT COLUMN */}
+                      {/* -------------------------------- */}
+
+                      <div className="flex flex-col justify-center space-y-4 text-white md:space-y-6">
+                        {/* Title */}
+                        <div>
+                          <h2 className="pr-8 text-2xl font-bold tracking-tight md:pr-12 md:text-5xl">
+                            {selectedItem.partner}
+                          </h2>
+                        </div>
+
+                        {/* Description */}
+                        {selectedItem.description && (
+                          <div>
+                            <p className="text-sm font-light leading-relaxed text-white/80 md:text-base">
+                              {selectedItem.description}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Services */}
+                        {selectedItem.services && (
+                          <div className="space-y-2 md:space-y-3">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-white">
+                              Services
+                            </p>
+
+                            <div className="flex flex-wrap gap-2">
+                              {selectedItem.services
+                                .split(',')
+                                .map(
+                                  (
+                                    service: string,
+                                    idx: number
+                                  ) => (
+                                    <span
+                                      key={`${service.trim()}-${idx}`}
+                                      className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-light text-white transition hover:border-white/40"
+                                    >
+                                      {service.trim()}
+                                    </span>
+                                  )
+                                )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Category */}
+                        {selectedItem.category && (
+                          <div className="space-y-2 md:space-y-3">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-white">
+                              Category
+                            </p>
+
+                            <p className="text-sm font-light text-white/80">
+                              {selectedItem.category}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* CTA */}
+                        {selectedItem.url && (
+                          <div className="pt-2 md:pt-4">
+                            <a
+                              href={selectedItem.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(event) =>
+                                event.stopPropagation()
+                              }
+                              className="group inline-flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-70"
+                            >
+                              View Project
+
+                              <span className="text-lg transition-transform group-hover:translate-x-1">
+                                →
+                              </span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* -------------------------------- */}
+                      {/* RIGHT COLUMN */}
+                      {/* -------------------------------- */}
+
+                      <div className="relative mt-8 aspect-[4/3] min-h-[200px] overflow-hidden rounded-lg bg-gray-100 md:aspect-auto md:min-h-[320px] md:h-96">
+                        <img
+                          src={selectedItem.img}
+                          alt={`${selectedItem.partner} project`}
+                          className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                        />
+
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+    </section>
   );
 };
 

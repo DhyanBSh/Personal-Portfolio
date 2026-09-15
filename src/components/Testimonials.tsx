@@ -58,6 +58,7 @@ export const Testimonials = () => {
 
   const isAutoScrollPausedRef = useRef(false);
   const resumeAutoScrollTimerRef = useRef<number | null>(null);
+  const isHoveringRef = useRef(false);
 
   const getCycleWidth = () => firstSetRef.current?.offsetWidth ?? 0;
 
@@ -129,7 +130,9 @@ export const Testimonials = () => {
       const elapsed = Math.min(time - lastFrameTimeRef.current, 50);
       lastFrameTimeRef.current = time;
 
-      if (!prefersReducedMotion && !isDraggingRef.current && !isAutoScrollPausedRef.current) {
+      // Auto-scroll only on desktop (md breakpoint ~768px), when not hovering, dragging, or paused
+      const isDesktop = window.innerWidth >= 768;
+      if (!prefersReducedMotion && isDesktop && !isDraggingRef.current && !isAutoScrollPausedRef.current && !isHoveringRef.current) {
         track.scrollLeft += (elapsed / 16.67) * AUTO_SCROLL_SPEED;
         normalizeScroll();
       }
@@ -181,6 +184,9 @@ export const Testimonials = () => {
     isDraggingRef.current = false;
     document.body.style.userSelect = '';
     document.body.style.cursor = '';
+
+    // Reset hover state when mouse leaves while dragging
+    isHoveringRef.current = false;
   };
 
   const handleTouchStart = () => {
@@ -189,6 +195,14 @@ export const Testimonials = () => {
 
   const handleScroll = () => {
     normalizeScroll();
+  };
+
+  const handleMouseEnter = () => {
+    isHoveringRef.current = true;
+  };
+
+  const handleMouseLeaveTrack = () => {
+    isHoveringRef.current = false;
   };
 
   return (
@@ -205,9 +219,6 @@ export const Testimonials = () => {
         >
           Client Stories
         </h2>
-        <span className="hidden pb-1 text-[10px] font-semibold uppercase tracking-[0.22em] opacity-50 sm:block">
-          Drag or swipe to explore
-        </span>
       </div>
 
       <motion.div
@@ -221,6 +232,7 @@ export const Testimonials = () => {
         onMouseUp={endMouseDrag}
         onMouseLeave={endMouseDrag}
         onTouchStart={handleTouchStart}
+        onMouseEnter={handleMouseEnter}
         className="flex cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scrollbar-width:none] [touch-action:pan-x_pan-y] select-none [&::-webkit-scrollbar]:hidden active:cursor-grabbing"
       >
         <div ref={firstSetRef} className="flex gap-6">
